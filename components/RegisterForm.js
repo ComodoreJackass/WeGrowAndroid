@@ -48,9 +48,7 @@ export default function RegisterForm({ navigation, route }) {
                 body: JSON.stringify({
                     username: username,
                     password: password,
-                    email: email,
-                    //TODO dehardcode timestamp, will require server update
-                    createdOn: '2000-12-16T11:21:13.000Z'
+                    email: email
                 }),
             });
             let responseStatus = await response.status;

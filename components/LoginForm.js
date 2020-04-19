@@ -7,7 +7,10 @@ export default function LoginForm({ navigation, route }) {
     const [password, setPassword] = useState('');
     const [usernameValidated, setUsernameValidated] = useState(false);
     const [passwordValidated, setPasswordValidated] = useState(false);
+    //Necesary to verify user upon sending requests to other endpoints
     const [jsonToken, setJsonToken] = useState('');
+    //User id, will be used for further requests
+    const [userId, setUserId] = useState(0);
     const [visible, setVisible] = useState(false);
     const [snackText, setSnackText] = useState('');
 
@@ -47,7 +50,11 @@ export default function LoginForm({ navigation, route }) {
             if (responseStatus == 200) {
                 let json = await response.json();
                 setJsonToken(json.accessToken);
-                navigation.navigate('Home');
+                setUserId(json.userId);
+                navigation.navigate('Home', {
+                    jsonToken: jsonToken,
+                    userId: userId
+                });
             }
             else {
                 setUsername('');
