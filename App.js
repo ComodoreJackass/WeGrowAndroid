@@ -1,5 +1,5 @@
 import React from 'react';
-import { Provider as PaperProvider } from 'react-native-paper';
+import { DefaultTheme, Provider as PaperProvider, Colors } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -8,18 +8,34 @@ import RegisterForm from './components/RegisterForm'
 import HomeScreen from './components/HomeScreen'
 import UserInfoScreen from './components/UserInfoScreen'
 import AddPlantScreen from './components/AddPlantScreen'
+import PlantDetailsScreen from './components/PlantDetailsScreen'
+import TabNavigation from './components/TabNavigation'
 
 const Stack = createStackNavigator();
+
+const theme = {
+  ...DefaultTheme,
+  roundness: 2,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#1D9044',
+    accent: '#7EBF88',
+    surface: '#FFF0E9',
+    placeholder: '#1D9044',
+    text: Colors.grey800
+  },
+};
 
 export default function App() {
 
   return (
     <>
-      <PaperProvider>
+      <PaperProvider theme={theme}>
         <NavigationContainer>
           <Stack.Navigator
             screenOptions={{
-              headerLeft: null
+              headerLeft: null,
+              headerShown: false
             }}
           >
             <Stack.Screen
@@ -31,16 +47,12 @@ export default function App() {
               component={RegisterForm}
             />
             <Stack.Screen
-              name="Home"
-              component={HomeScreen}
+              name="Details"
+              component={PlantDetailsScreen}
             />
             <Stack.Screen
-              name="User"
-              component={UserInfoScreen}
-            />
-            <Stack.Screen
-              name="Plants"
-              component={AddPlantScreen}
+              name="Tab"
+              component={TabNavigation}
             />
           </Stack.Navigator>
         </NavigationContainer>

@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { TextInput, Snackbar } from 'react-native-paper';
+import { TextInput, Snackbar, Title, Avatar, Colors } from 'react-native-paper';
 
 export default function RegisterForm({ navigation, route }) {
     const [email, setEmail] = useState('');
@@ -56,7 +56,7 @@ export default function RegisterForm({ navigation, route }) {
             if (responseStatus == 200) {
                 navigation.navigate('Login', { post: 'Account created. Please log in.' });
             }
-            else if(responseStatus == 304){
+            else if (responseStatus == 304) {
                 setUsername('');
                 setPassword('');
                 setEmail('');
@@ -80,9 +80,15 @@ export default function RegisterForm({ navigation, route }) {
 
     return (
         <View style={styles.container}>
+            <View style={{ paddingTop: 40, paddingBottom: 40 }}>
+                <Avatar.Icon size={80} icon="account" color={Colors.white} style={{ alignSelf: "center" }} />
+                <Title style={{ alignSelf: "center", paddingTop: 5 }}>Registracija</Title>
+            </View>
             <TextInput
                 label='Email'
                 error={emailValidated}
+                style={{ backgroundColor: '#C1DFB7' }}
+                mode='outlined'
                 onChangeText={text => {
                     setEmail(text.toString());
                     setEmailValidated(false);
@@ -90,8 +96,10 @@ export default function RegisterForm({ navigation, route }) {
                 value={email}
             />
             <TextInput
-                label='Username'
+                label='Korisničko ime'
                 error={usernameValidated}
+                style={{ backgroundColor: '#C1DFB7' }}
+                mode='outlined'
                 onChangeText={text => {
                     setUsername(text.toString());
                     setUsernameValidated(false);
@@ -99,8 +107,10 @@ export default function RegisterForm({ navigation, route }) {
                 value={username}
             />
             <TextInput
-                label='Password'
+                label='Lozinka'
                 error={passwordValidated}
+                style={{ backgroundColor: '#C1DFB7' }}
+                mode='outlined'
                 secureTextEntry={true}
                 onChangeText={text => {
                     setPassword(text.toString());
@@ -108,20 +118,24 @@ export default function RegisterForm({ navigation, route }) {
                 }}
                 value={password}
             />
-            <Button
-                theme={{ roundness: 5 }}
-                mode="contained"
-                onPress={verifyInput}
-            >
-                Register
-            </Button>
-            <Button
-                theme={{ roundness: 5 }}
-                mode="text"
-                onPress={() => navigation.navigate('Login')}
-            >
-                Login
-            </Button>
+            <View style={{ paddingTop: 50 }}>
+                <Button
+                    theme={{ roundness: 5 }}
+                    style={{paddingTop:10, paddingBottom:10}}
+                    mode="contained"
+                    onPress={verifyInput}
+                >
+                    Registrirajte se
+                </Button>
+                <Button
+                    theme={{ roundness: 5 }}
+                    style={{paddingTop:10, paddingBottom:10}}
+                    mode="text"
+                    onPress={() => navigation.navigate('Login')}
+                >
+                    Prijava
+                </Button>
+            </View>
             <Snackbar
                 visible={visible}
                 onDismiss={onDismissSnackBar}
@@ -140,6 +154,8 @@ export default function RegisterForm({ navigation, route }) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#F1E3C8',
     },
 });

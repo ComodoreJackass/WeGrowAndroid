@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, Snackbar, TextInput } from 'react-native-paper';
+import { Button, Snackbar, TextInput, Title, Avatar, Colors } from 'react-native-paper';
 
 export default function LoginForm({ navigation, route }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [usernameValidated, setUsernameValidated] = useState(false);
     const [passwordValidated, setPasswordValidated] = useState(false);
-    //Necesary to verify user upon sending requests to other endpoints
-    const [jsonToken, setJsonToken] = useState('');
-    //User id, will be used for further requests
-    const [userId, setUserId] = useState(0);
     const [visible, setVisible] = useState(false);
     const [snackText, setSnackText] = useState('');
 
@@ -45,23 +41,28 @@ export default function LoginForm({ navigation, route }) {
                     password: password,
                 }),
             });
-            let responseStatus = await response.status;
 
-            if (responseStatus == 200) {
+            if (response.status == 200) {
                 let json = await response.json();
-                setJsonToken(json.accessToken);
-                setUserId(json.userId);
-                navigation.navigate('Home', {
-                    jsonToken: jsonToken,
-                    userId: userId
+                console.log("logged in");
+                navigation.navigate('Tab', {
+                    jsonToken: json.accessToken,
+                    userId: json.userId
                 });
+                /*navigation.navigate('Tab', {
+                    screen: 'Home',
+                    params: {
+                        jsonToken: json.accessToken,
+                        userId: json.userId
+                    }
+                });*/
             }
             else {
                 setUsername('');
                 setPassword('');
                 setSnackText('Username or password not found');
                 setVisible(true);
-                console.log(responseStatus);
+                console.log(response.status);
             }
         } catch (error) {
             console.error(error);
@@ -81,8 +82,14 @@ export default function LoginForm({ navigation, route }) {
 
     return (
         <View style={styles.container}>
+            <View style={{ paddingTop: 40, paddingBottom: 50 }}>
+                <Avatar.Icon size={90} icon="account" color={Colors.white} style={{ alignSelf: "center" }} />
+                <Title style={{ alignSelf: "center", paddingTop: 5 }}>Prijava</Title>
+            </View>
             <TextInput
-                label='Username'
+                label='Korisničko ime'
+                mode='outlined'
+                style={{ backgroundColor: '#C1DFB7' }}
                 error={usernameValidated}
                 onChangeText={text => {
                     setUsername(text.toString());
@@ -91,7 +98,9 @@ export default function LoginForm({ navigation, route }) {
                 value={username}
             />
             <TextInput
-                label='Password'
+                label='Lozinka'
+                mode='outlined'
+                style={{ backgroundColor: '#C1DFB7' }}
                 error={passwordValidated}
                 secureTextEntry={true}
                 onChangeText={text => {
@@ -100,20 +109,24 @@ export default function LoginForm({ navigation, route }) {
                 }}
                 value={password}
             />
-            <Button
-                theme={{ roundness: 5 }}
-                mode="contained"
-                onPress={verifyInput}
-            >
-                Login
-            </Button>
-            <Button
-                theme={{ roundness: 5 }}
-                mode="text"
-                onPress={() => navigation.navigate('Register')}
-            >
-                Register
-            </Button>
+            <View style={{ paddingTop: 50 }}>
+                <Button
+                    theme={{ roundness: 5 }}
+                    style={{ paddingTop: 10, paddingBottom: 10 }}
+                    mode="contained"
+                    onPress={verifyInput}
+                >
+                    Prijavite se
+                </Button>
+                <Button
+                    theme={{ roundness: 5 }}
+                    style={{ paddingTop: 10, paddingBottom: 10 }}
+                    mode="text"
+                    onPress={() => navigation.navigate('Register')}
+                >
+                    Registracija
+                </Button>
+            </View>
             <Snackbar
                 visible={visible}
                 onDismiss={onDismissSnackBar}
@@ -132,6 +145,8 @@ export default function LoginForm({ navigation, route }) {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#F1E3C8'
     },
 });

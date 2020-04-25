@@ -8,44 +8,20 @@ export default function UserInfoScreen({ navigation, route }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.content}>
-                Hello
-            </Text>
-            <Appbar style={styles.nav}>
-                <Appbar.Action
-                    icon="flower-outline"
-                    onPress={() => navigation.navigate('Plants', {
-                        jsonToken: jsonToken,
-                        userId: userId
-                    })}
-                />
-                <Appbar.Action
-                    icon="clipboard-text-outline"
-                    onPress={() => navigation.navigate('Home', {
-                        jsonToken: jsonToken,
-                        userId: userId
-                    })}
-                />
-                <Appbar.Action
-                    icon="account"
-                    onPress={() => navigation.navigate('User', {
-                        jsonToken: jsonToken,
-                        userId: userId
-                    })}
-                />
-            </Appbar>
+            <Title style={styles.content}>
+                Upravljanje računom
+            </Title>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: '#F1E3C8',
+        padding: 10
     },
-    nav: {
-        flex:1
-    },
-    content:{
-        flex:9
+    content: {
+        flex: 9
     }
 });
