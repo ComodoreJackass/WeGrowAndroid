@@ -7,9 +7,6 @@ export default function PlantDetailsScreen({ navigation, route }) {
     const [userId, setUserId] = useState(route.params.userId);
     const [progressId, setProgressId] = useState(route.params.progressId);
 
-    const [progress, setProgress] = useState({});
-    const [conditions, setConditions] = useState({});
-
     useEffect(() => {
         const backAction = () => {
             navigation.navigate('Tab', {
@@ -28,88 +25,6 @@ export default function PlantDetailsScreen({ navigation, route }) {
         return () => BackHandler.removeEventListener("hardwareBackPress", backAction);
     }, []);
 
-    useEffect(() => {
-        tryToGetInfo();
-    }, [jsonToken, userId, progressId]);
-
-    async function tryToGetInfo() {
-        try {
-            let response = await fetch('https://afternoon-depths-99413.herokuapp.com/progress/byId', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'authorization': 'Bearer ' + jsonToken
-                },
-                body: JSON.stringify({
-                    userId: userId
-                }),
-            });
-            let responseStatus = await response.status;
-
-            if (responseStatus == 200) {
-                let json = await response.json();
-
-                json.forEach(element => {
-                    if (element.id == progressId) {
-                        setProgress(element);
-                        tryToGetConditions(element.growth_stage.growth_id)
-                    }
-                });
-            }
-            else {
-                console.log(responseStatus + " " + userId + " " + jsonToken);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async function tryToGetConditions(growthCondition) {
-        try {
-            let response = await fetch('https://afternoon-depths-99413.herokuapp.com/growthConditions/byId', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'authorization': 'Bearer ' + jsonToken
-                },
-                body: JSON.stringify({
-                    growthConditionsId: growthCondition
-                }),
-            });
-            let responseStatus = await response.status;
-
-            if (responseStatus == 200) {
-                let json = await response.json();
-
-                json.forEach(element => {
-                    if (element.id == growthCondition) {
-                        setConditions(element);
-                    }
-                });
-            }
-            else {
-                console.log(responseStatus + " " + userId + " " + jsonToken);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    const [plantName, setPlantName] = useState('');
-    const [stageTitle, setStageTitle] = useState('');
-    const [stageDuration, setStageDuration] = useState('');
-
-
-    useEffect(() => {
-        if (Object.keys(progress).length !== 0) {
-            setPlantName(progress.plant.name);
-            setStageTitle(progress.growth_stage.stage_title)
-            setStageDuration(progress.growth_stage.stage_duration)
-        }
-    }, [conditions]);
-
     return (
         <View style={{ flex: 1 }}>
             <Appbar.Header>
@@ -125,10 +40,10 @@ export default function PlantDetailsScreen({ navigation, route }) {
             </Appbar.Header>
             <View style={styles.container}>
                 <ScrollView>
-                    <Subheading>Naziv: {plantName}</Subheading>
+                    <Subheading>Naziv: {route.params.plantName}</Subheading>
                     <Subheading>Vrsta: povrće </Subheading>
-                    <Subheading>Vrijeme uzgoja: {stageDuration} dana </Subheading>
-                    <Subheading>Proteklo vrijeme: koliko god dana</Subheading>
+                    <Subheading>Vrijeme uzgoja: {route.params.duration} dana </Subheading>
+                    <Subheading>Proteklo vrijeme: {route.params.elapsedTime}</Subheading>
 
                     <View style={styles.row}>
                         <View style={{
@@ -145,20 +60,18 @@ export default function PlantDetailsScreen({ navigation, route }) {
                         </View>
                     </View>
 
-                    <List.Section>
+                    <List.Section style={{marginLeft:-20}}>
                         <List.Accordion
                             title="Briga o biljci"
                             left={props => <List.Icon {...props} icon="sprout" />}
                         >
-                            <List.Item title="First item" />
-                            <List.Item title="Second item" />
+                            <Subheading style={{marginLeft:-20, paddingRight:10}}>{route.params.plantCare}</Subheading>
                         </List.Accordion>
                         <List.Accordion
                             title="Upute za sadnju"
                             left={props => <List.Icon {...props} icon="shovel" />}
                         >
-                            <List.Item title="First item" />
-                            <List.Item title="Second item" />
+                            <Subheading style={{marginLeft:-20, paddingRight:10}}>{route.params.plantInstructions}</Subheading>
                         </List.Accordion>
                     </List.Section>
 

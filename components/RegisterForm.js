@@ -1,7 +1,7 @@
-import React, { Component, useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-paper';
-import { TextInput, Snackbar, Title, Avatar, Colors } from 'react-native-paper';
+import { TextInput, Snackbar, Title, Avatar, Colors, Divider } from 'react-native-paper';
 
 export default function RegisterForm({ navigation, route }) {
     const [email, setEmail] = useState('');
@@ -60,14 +60,14 @@ export default function RegisterForm({ navigation, route }) {
                 setUsername('');
                 setPassword('');
                 setEmail('');
-                setSnackText('Account already exists.');
+                setSnackText('Korisnik već postoji.');
                 setVisible(true);
             }
             else {
                 setUsername('');
                 setPassword('');
                 setEmail('');
-                setSnackText('Something went wrong' + responseStatus);
+                setSnackText('Greška:' + responseStatus);
                 setVisible(true);
             }
         } catch (error) {
@@ -79,62 +79,76 @@ export default function RegisterForm({ navigation, route }) {
     const onDismissSnackBar = () => setVisible(false);
 
     return (
-        <View style={styles.container}>
-            <View style={{ paddingTop: 40, paddingBottom: 40 }}>
-                <Avatar.Icon size={80} icon="account" color={Colors.white} style={{ alignSelf: "center" }} />
-                <Title style={{ alignSelf: "center", paddingTop: 5 }}>Registracija</Title>
-            </View>
-            <TextInput
-                label='Email'
-                error={emailValidated}
-                style={{ backgroundColor: '#C1DFB7' }}
-                mode='outlined'
-                onChangeText={text => {
-                    setEmail(text.toString());
-                    setEmailValidated(false);
-                }}
-                value={email}
-            />
-            <TextInput
-                label='Korisničko ime'
-                error={usernameValidated}
-                style={{ backgroundColor: '#C1DFB7' }}
-                mode='outlined'
-                onChangeText={text => {
-                    setUsername(text.toString());
-                    setUsernameValidated(false);
-                }}
-                value={username}
-            />
-            <TextInput
-                label='Lozinka'
-                error={passwordValidated}
-                style={{ backgroundColor: '#C1DFB7' }}
-                mode='outlined'
-                secureTextEntry={true}
-                onChangeText={text => {
-                    setPassword(text.toString());
-                    setPasswordValidated(false);
-                }}
-                value={password}
-            />
-            <View style={{ paddingTop: 50 }}>
-                <Button
-                    theme={{ roundness: 5 }}
-                    style={{paddingTop:10, paddingBottom:10}}
-                    mode="contained"
-                    onPress={verifyInput}
-                >
-                    Registrirajte se
-                </Button>
-                <Button
-                    theme={{ roundness: 5 }}
-                    style={{paddingTop:10, paddingBottom:10}}
-                    mode="text"
-                    onPress={() => navigation.navigate('Login')}
-                >
-                    Prijava
-                </Button>
+        <View style={{ flex: 1 }}>
+            <View style={styles.container}>
+                <View style={{ paddingTop: 40, paddingBottom: 40 }}>
+                    <Avatar.Icon size={90} icon="account" color={Colors.white} style={{ alignSelf: "center" }} />
+                    <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+                        <View style={{ flex: 1 }}></View>
+                        <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: 1, marginTop: 24 }} />
+                        <Title style={{ flex: 2.8, paddingTop: 5, textAlign: "center" }}>Registracija</Title>
+                        <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: 1, marginTop: 24 }} />
+                        <View style={{ flex: 1 }}></View>
+                    </View>
+                </View>
+                <TextInput
+                    label='Email'
+                    error={emailValidated}
+                    theme={{ roundness: 50 }}
+                    style={{ backgroundColor: '#FFF6F2' }}
+                    mode='outlined'
+                    onChangeText={text => {
+                        setEmail(text.toString());
+                        setEmailValidated(false);
+                    }}
+                    value={email}
+                />
+                <TextInput
+                    label='Korisničko ime'
+                    error={usernameValidated}
+                    theme={{ roundness: 50 }}
+                    style={{ backgroundColor: '#FFF6F2' }}
+                    mode='outlined'
+                    onChangeText={text => {
+                        setUsername(text.toString());
+                        setUsernameValidated(false);
+                    }}
+                    value={username}
+                />
+                <TextInput
+                    label='Lozinka'
+                    error={passwordValidated}
+                    theme={{ roundness: 50 }}
+                    style={{ backgroundColor: '#FFF6F2' }}
+                    mode='outlined'
+                    secureTextEntry={true}
+                    onChangeText={text => {
+                        setPassword(text.toString());
+                        setPasswordValidated(false);
+                    }}
+                    value={password}
+                />
+                <View style={{ paddingTop: 30 }}>
+                    <Button
+                        theme={{ roundness: 50 }}
+                        style={{ paddingTop: 10, paddingBottom: 10 }}
+                        mode="contained"
+                        onPress={verifyInput}
+                    >
+                        Registrirajte se
+                    </Button>
+                </View>
+                <View style={{ paddingTop: 40 }}>
+                    <Divider style={{ backgroundColor: '#1D9044', padding: 1 }} />
+                    <Button
+                        theme={{ roundness: 5 }}
+                        style={{ paddingTop: 10, paddingBottom: 10 }}
+                        mode="text"
+                        onPress={() => navigation.navigate('Login')}
+                    >
+                        Prijava
+                    </Button>
+                </View>
             </View>
             <Snackbar
                 visible={visible}

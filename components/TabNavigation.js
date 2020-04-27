@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, BackHandler, Alert } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Appbar } from 'react-native-paper';
+import { Text, View, Dimensions } from 'react-native';
+
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import HomeScreen from './HomeScreen';
 import UserInfoScreen from './UserInfoScreen'
 import AddPlantScreen from './AddPlantScreen'
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 function PlaceHolder() {
     return (<View></View>);
 }
 
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialTopTabNavigator();
 
 export default function TabNavigation({ navigation, route }) {
     const [jsonToken, setJsonToken] = useState(route.params.jsonToken);
     const [userId, setUserId] = useState(route.params.userId);
+    const [username, setUsername] = useState(route.params.username);
+    const [password, setPassowrd] = useState(route.params.password);
+
     const [size1, setSize1] = useState(24);
     const [size2, setSize2] = useState(32);
     const [size3, setSize3] = useState(24);
@@ -27,63 +32,63 @@ export default function TabNavigation({ navigation, route }) {
         })
     }, [jsonToken, userId]);
 
-    function PlaceHolder() {
-        return (<View></View>);
-    }
-
-    function PaperTabBar({ state, descriptors, navigation }) {
-        return (
-            <Appbar style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
-                <Appbar.Action
-                    icon="flower-outline"
-                    size={size1}
-                    onPress={() => {
-                        setSize1(32);
-                        setSize2(24);
-                        setSize3(24);
-                        navigation.navigate('Plants', {
-                            jsonToken: jsonToken,
-                            userId: userId
-                        })
-                    }}
-                />
-                <Appbar.Action
-                    icon="clipboard-text-outline"
-                    size={size2}
-                    onPress={() => {
-                        setSize1(24);
-                        setSize2(32);
-                        setSize3(24);
-                        navigation.navigate('Home', {
-                            jsonToken: jsonToken,
-                            userId: userId
-                        })
-                    }}
-                />
-                <Appbar.Action
-                    icon="account"
-                    size={size3}
-                    onPress={() => {
-                        setSize1(24);
-                        setSize2(24);
-                        setSize3(32);
-                        navigation.navigate('User', {
-                            jsonToken: jsonToken,
-                            userId: userId
-                        }
-                        )
-                    }}
-                />
-            </Appbar>
-        );
-    }
-
     return (
-        <Tab.Navigator tabBar={props => <PaperTabBar {...props} />}>
-            <Tab.Screen name="Placeholder" component={PlaceHolder} />
-            <Tab.Screen name="Home" component={HomeScreen} />
-            <Tab.Screen name="Plants" component={AddPlantScreen} />
-            <Tab.Screen name="User" component={UserInfoScreen} />
+        <Tab.Navigator
+            initialRouteName="Home"
+            tabBarPosition="bottom"
+            tabBarOptions={{
+                showIcon: true,
+                showLabel: false,
+                activeTintColor: '#FFF0E9',
+                inactiveTintColor: Colors.gray100,
+                style: { backgroundColor: '#1D9044', height:55 },
+                indicatorStyle: {
+                    opacity: 0
+                  }
+            }}
+            initialLayout={ {width: Dimensions.get('window').width} }
+        >
+            <Tab.Screen
+                name="Plants"
+                component={AddPlantScreen}
+                initialParams={{
+                    jsonToken: jsonToken,
+                    userId: userId,
+                }}
+                options={{
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons name="flower-outline" color={color} size={28} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Home"
+                component={HomeScreen}
+                initialParams={{
+                    jsonToken: jsonToken,
+                    userId: userId,
+                }}
+                options={{
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons name="clipboard-text-outline" color={color} size={28} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="User"
+                component={UserInfoScreen}
+                initialParams={{
+                    jsonToken: jsonToken,
+                    userId: userId,
+                    username: username,
+                    password: password
+                }}
+                options={{
+                    tabBarIcon: ({ color }) => (
+                        <MaterialCommunityIcons name="account" color={color} size={28} />
+                    ),
+                }}
+            />
         </Tab.Navigator>
     );
 }

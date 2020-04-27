@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet, BackHandler, Alert } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph, Appbar, Colors, ProgressBar } from 'react-native-paper';
-
+import { View, ScrollView, RefreshControl, StyleSheet, BackHandler, Alert, Text } from 'react-native';
+import { Avatar, Button, Card, Title, Paragraph, Colors, ProgressBar, Subheading } from 'react-native-paper';
 
 export default function HomeScreen({ navigation, route }) {
   const [jsonToken, setJsonToken] = useState(route.params.jsonToken);
@@ -10,6 +9,18 @@ export default function HomeScreen({ navigation, route }) {
   const [progress, setProgress] = useState([]);
   const [cards, setCards] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
+  const [progressFetched, setProgressFetched] = useState(false);
+
+  /**
+   *  Refresh on tab focus
+   */
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', (e) => {
+      onRefresh();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     const backAction = () => {
@@ -50,6 +61,7 @@ export default function HomeScreen({ navigation, route }) {
       if (responseStatus == 200) {
         let json = await response.json();
         setProgress(json);
+        setProgressFetched(true);
       }
       else {
         console.log(responseStatus + " " + userId + " " + jsonToken);
@@ -86,6 +98,45 @@ export default function HomeScreen({ navigation, route }) {
     }
   }
 
+  function elapsedTime(time) {
+    let days = Math.floor((Date.now() - time) / (60000 * 60 * 24));
+    let hours = Math.floor((Date.now() - time) / (60000 * 60));
+
+    let elapsedTime = "";
+
+    if (days == 0) {
+      elapsedTime += "0 dana ";
+    } else if (days == 1) {
+      elapsedTime += days + " dan ";
+    } else {
+      elapsedTime += days + " dana ";
+    }
+
+    if (hours == 0) {
+      elapsedTime += "0 sati";
+    } else if (hours == 1) {
+      elapsedTime += hours + " sat ";
+    } else {
+      elapsedTime += hours + " sata ";
+    }
+
+    return elapsedTime
+
+  }
+
+  function calculateProgress(started, expected) {
+
+    let expectedDays = parseInt(expected.split("-")[0]);
+    let currDiff = Math.floor((Date.now() - started) / (60000 * 60 * 24));
+
+    if (currDiff > 0) {
+      return expectedDays / currDiff;
+    }
+    else {
+      return 0;
+    }
+  }
+
   useEffect(() => {
     tryToLogIn();
   }, [jsonToken, userId]);
@@ -96,7 +147,12 @@ export default function HomeScreen({ navigation, route }) {
         navigation.navigate('Details', {
           jsonToken: jsonToken,
           userId: userId,
-          progressId: prog.id
+          progressId: prog.id,
+          plantName: prog.plant.name,
+          elapsedTime: elapsedTime(Date.parse(prog.started_on)),
+          duration: prog.growth_stage.stage_duration,
+          plantCare: prog.growth_stage.next_stage_text,
+          plantInstructions: prog.growth_stage.description
         })
       }}>
         <Card.Title title={prog.plant.name} subtitle={prog.growth_stage.stage_title} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
@@ -104,8 +160,10 @@ export default function HomeScreen({ navigation, route }) {
           <Title>Očekivano vrijeme uzgoja</Title>
           <Paragraph>{prog.growth_stage.stage_duration} dana</Paragraph>
           <Title>Proteklo vrijeme</Title>
-          <Paragraph>{prog.started_on}</Paragraph>
-          <ProgressBar progress={0.5} color={Colors.green500} style={{ width: 100 }} />
+          <Paragraph>{elapsedTime(Date.parse(prog.started_on))}</Paragraph>
+          <View style={{ paddingTop: 10, width: 150 }}>
+            <ProgressBar progress={calculateProgress(Date.parse(prog.started_on), prog.growth_stage.stage_duration)} color={Colors.green500} />
+          </View>
         </Card.Content>
         <Card.Actions>
           <Button
@@ -127,7 +185,7 @@ export default function HomeScreen({ navigation, route }) {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: '#F1E3C8' }}>
       <ScrollView style={styles.container} refreshControl={
         <RefreshControl
           refreshing={refreshing}
@@ -135,7 +193,19 @@ export default function HomeScreen({ navigation, route }) {
         />
       }
       >
-        {cards}
+        {progressFetched
+          ?
+          cards.length > 0
+            ?
+            cards
+            :
+            <Subheading
+              style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', paddingTop: 200 }}
+            >
+              Swajpate desno kako bi dodali biljku na ekran za praćenje.
+            </Subheading>
+          :
+          <View style={{ flex: 1, backgroundColor: '#F1E3C8' }}></View>}
       </ScrollView>
     </View >
   );
@@ -144,8 +214,9 @@ export default function HomeScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F1E3C8',
-    padding: 10
+    paddingLeft: 40,
+    paddingRight: 40,
+    paddingTop: 5
   },
   card: {
     borderWidth: 10,

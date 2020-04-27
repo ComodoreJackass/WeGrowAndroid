@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Button, Snackbar, TextInput, Title, Avatar, Colors } from 'react-native-paper';
+import { Button, Snackbar, TextInput, Title, Avatar, Colors, Divider } from 'react-native-paper';
 
 export default function LoginForm({ navigation, route }) {
     const [username, setUsername] = useState('');
@@ -47,20 +47,15 @@ export default function LoginForm({ navigation, route }) {
                 console.log("logged in");
                 navigation.navigate('Tab', {
                     jsonToken: json.accessToken,
-                    userId: json.userId
+                    userId: json.userId,
+                    username: username,
+                    password: password
                 });
-                /*navigation.navigate('Tab', {
-                    screen: 'Home',
-                    params: {
-                        jsonToken: json.accessToken,
-                        userId: json.userId
-                    }
-                });*/
             }
             else {
                 setUsername('');
                 setPassword('');
-                setSnackText('Username or password not found');
+                setSnackText('Korisničko ime ili lozinka ne postoje');
                 setVisible(true);
                 console.log(response.status);
             }
@@ -81,51 +76,64 @@ export default function LoginForm({ navigation, route }) {
     }, [route.params?.post]);
 
     return (
-        <View style={styles.container}>
-            <View style={{ paddingTop: 40, paddingBottom: 50 }}>
-                <Avatar.Icon size={90} icon="account" color={Colors.white} style={{ alignSelf: "center" }} />
-                <Title style={{ alignSelf: "center", paddingTop: 5 }}>Prijava</Title>
-            </View>
-            <TextInput
-                label='Korisničko ime'
-                mode='outlined'
-                style={{ backgroundColor: '#C1DFB7' }}
-                error={usernameValidated}
-                onChangeText={text => {
-                    setUsername(text.toString());
-                    setUsernameValidated(false);
-                }}
-                value={username}
-            />
-            <TextInput
-                label='Lozinka'
-                mode='outlined'
-                style={{ backgroundColor: '#C1DFB7' }}
-                error={passwordValidated}
-                secureTextEntry={true}
-                onChangeText={text => {
-                    setPassword(text.toString());
-                    setPasswordValidated(false);
-                }}
-                value={password}
-            />
-            <View style={{ paddingTop: 50 }}>
-                <Button
-                    theme={{ roundness: 5 }}
-                    style={{ paddingTop: 10, paddingBottom: 10 }}
-                    mode="contained"
-                    onPress={verifyInput}
-                >
-                    Prijavite se
+        <View style={{ flex: 1 }}>
+            <View style={styles.container}>
+                <View style={{ paddingTop: 40, paddingBottom: 40 }}>
+                    <Avatar.Icon size={90} icon="account" color={Colors.white} style={{ alignSelf: "center" }} />
+                    <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+                        <View style={{ flex: 1 }}></View>
+                        <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: 1, marginTop: 24 }} />
+                        <Title style={{ flex: 1.4, paddingTop: 5, textAlign: "center" }}>Prijava</Title>
+                        <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: 1, marginTop: 24 }} />
+                        <View style={{ flex: 1 }}></View>
+                    </View>
+                </View>
+                <TextInput
+                    label='Korisničko ime'
+                    mode='outlined'
+                    theme={{ roundness: 50 }}
+                    style={{ backgroundColor: '#FFF6F2' }}
+                    error={usernameValidated}
+                    onChangeText={text => {
+                        setUsername(text.toString());
+                        setUsernameValidated(false);
+                    }}
+                    value={username}
+                />
+                <TextInput
+                    label='Lozinka'
+                    mode='outlined'
+                    theme={{ roundness: 50 }}
+                    style={{ backgroundColor: '#FFF6F2' }}
+                    error={passwordValidated}
+                    secureTextEntry={true}
+                    onChangeText={text => {
+                        setPassword(text.toString());
+                        setPasswordValidated(false);
+                    }}
+                    value={password}
+                />
+                <View style={{ paddingTop: 50 }}>
+                    <Button
+                        theme={{ roundness: 50 }}
+                        style={{ paddingTop: 10, paddingBottom: 10 }}
+                        mode="contained"
+                        onPress={verifyInput}
+                    >
+                        Prijavite se
+                    </Button>
+                </View>
+                <View style={{ paddingTop: 80 }}>
+                    <Divider style={{ backgroundColor: '#1D9044', padding: 1 }} />
+                    <Button
+                        theme={{ roundness: 5 }}
+                        style={{ paddingTop: 10, paddingBottom: 10 }}
+                        mode="text"
+                        onPress={() => navigation.navigate('Register')}
+                    >
+                        Registracija
                 </Button>
-                <Button
-                    theme={{ roundness: 5 }}
-                    style={{ paddingTop: 10, paddingBottom: 10 }}
-                    mode="text"
-                    onPress={() => navigation.navigate('Register')}
-                >
-                    Registracija
-                </Button>
+                </View>
             </View>
             <Snackbar
                 visible={visible}
