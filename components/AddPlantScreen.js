@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet } from 'react-native';
+import { View, ScrollView, RefreshControl, StyleSheet, ImageBackground } from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, Appbar, List, Snackbar, Subheading } from 'react-native-paper';
 
 export default function AddPlantScreen({ navigation, route }) {
@@ -180,36 +180,42 @@ export default function AddPlantScreen({ navigation, route }) {
 
     return (
         <View style={{ flex: 1, backgroundColor: '#F1E3C8' }}>
-            <ScrollView style={styles.container} refreshControl={
-                <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                />
-            }>
-                {
-                    cards.length > 0
-                        ?
-                        cards
-                        :
-                        <Subheading
-                            style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', paddingTop: 200 }}
-                        >
-                            Učitavanje...
+            <ImageBackground source={require('../assets/bckgl.png')} style={{
+                flex: 1,
+                resizeMode: "cover",
+                justifyContent: "center"
+            }}>
+                <ScrollView style={styles.container} refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                    />
+                }>
+                    {
+                        cards.length > 0
+                            ?
+                            cards
+                            :
+                            <Subheading
+                                style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', paddingTop: 200 }}
+                            >
+                                Učitavanje...
                         </Subheading>
-                }
-            </ScrollView>
-            <Snackbar
-                visible={visible}
-                onDismiss={onDismissSnackBar}
-                action={{
-                    label: 'Ok',
-                    onPress: () => {
-                        onToggleSnackBar
-                    },
-                }}
-            >
-                {snackText}
-            </Snackbar>
+                    }
+                </ScrollView>
+                <Snackbar
+                    visible={visible}
+                    onDismiss={onDismissSnackBar}
+                    action={{
+                        label: 'Ok',
+                        onPress: () => {
+                            onToggleSnackBar
+                        },
+                    }}
+                >
+                    {snackText}
+                </Snackbar>
+            </ImageBackground>
         </View>
     );
 }
@@ -217,8 +223,8 @@ export default function AddPlantScreen({ navigation, route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingLeft: 40,
-        paddingRight: 40,
+        paddingLeft: 44,
+        paddingRight: 44,
         paddingTop: 5
     },
     card: {

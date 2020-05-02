@@ -20,6 +20,8 @@ export default function TabNavigation({ navigation, route }) {
     const [userId, setUserId] = useState(route.params.userId);
     const [username, setUsername] = useState(route.params.username);
     const [password, setPassowrd] = useState(route.params.password);
+    const [email, setEmail] = useState(route.params.email);
+    const [date, setDate] = useState(route.params.date);
 
     const [size1, setSize1] = useState(24);
     const [size2, setSize2] = useState(32);
@@ -81,7 +83,9 @@ export default function TabNavigation({ navigation, route }) {
                     jsonToken: jsonToken,
                     userId: userId,
                     username: username,
-                    password: password
+                    password: password,
+                    email: email,
+                    date: date
                 }}
                 options={{
                     tabBarIcon: ({ color }) => (

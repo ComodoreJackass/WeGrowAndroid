@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet, BackHandler, Alert, Text } from 'react-native';
+import { View, ScrollView, RefreshControl, StyleSheet, BackHandler, Alert, Text, ImageBackground } from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, Colors, ProgressBar, Subheading } from 'react-native-paper';
 
 export default function HomeScreen({ navigation, route }) {
@@ -100,7 +100,7 @@ export default function HomeScreen({ navigation, route }) {
 
   function elapsedTime(time) {
     let days = Math.floor((Date.now() - time) / (60000 * 60 * 24));
-    let hours = Math.floor((Date.now() - time) / (60000 * 60));
+    let hours = Math.floor((Date.now() - time) / (60000 * 60)) % 24;
 
     let elapsedTime = "";
 
@@ -130,7 +130,7 @@ export default function HomeScreen({ navigation, route }) {
     let currDiff = Math.floor((Date.now() - started) / (60000 * 60 * 24));
 
     if (currDiff > 0) {
-      return expectedDays / currDiff;
+      return currDiff / expectedDays;
     }
     else {
       return 0;
@@ -202,7 +202,7 @@ export default function HomeScreen({ navigation, route }) {
             <Subheading
               style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', paddingTop: 200 }}
             >
-              Swajpate desno kako bi dodali biljku na ekran za praćenje.
+              Swajpate lijevo kako bi dodali biljku na ekran za praćenje.
             </Subheading>
           :
           <View style={{ flex: 1, backgroundColor: '#F1E3C8' }}></View>}
@@ -214,8 +214,8 @@ export default function HomeScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingLeft: 40,
-    paddingRight: 40,
+    paddingLeft: 44,
+    paddingRight: 44,
     paddingTop: 5
   },
   card: {
