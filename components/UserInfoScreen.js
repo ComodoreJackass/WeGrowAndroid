@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert, ImageBackground } from 'react-native';
-import { Avatar, Button, Subheading, Title } from 'react-native-paper';
+import { Avatar, Button, Subheading, Title, Appbar } from 'react-native-paper';
 import moment from 'moment';
 
 export default function UserInfoScreen({ navigation, route }) {
@@ -71,13 +71,13 @@ export default function UserInfoScreen({ navigation, route }) {
                     <View style={{ flex: 1 }}></View>
 
                     <View style={{ flex: 3 }}>
-                        <View style={{ flexDirection: "column", paddingBottom: 40}}>
+                        <View style={{ flexDirection: "column", paddingBottom: 40 }}>
                             <Title>Upravljanje računom</Title>
-                            <Subheading style={{ paddingTop: 20}}>Korisničko ime: {username} </Subheading>
-                            <Subheading style={{ paddingTop: 5}}>Email: {email} </Subheading>
+                            <Subheading style={{ paddingTop: 20 }}>Korisničko ime: {username} </Subheading>
+                            <Subheading style={{ paddingTop: 5 }}>Email: {email} </Subheading>
                             <Subheading style={{ paddingTop: 5, paddingBottom: 40 }}>Datum registracije: {moment(date).format('DD.MM.YYYY')} </Subheading>
 
-                            <View style={{ flexDirection: "row", paddingTop:60 }}>
+                            <View style={{ flexDirection: "row", paddingTop: 60 }}>
                                 <Button
                                     theme={{ roundness: 5 }}
                                     style={{ padding: 10, flex: 1 }}

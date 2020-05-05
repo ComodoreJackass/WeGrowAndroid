@@ -43,7 +43,7 @@ export default function TabNavigation({ navigation, route }) {
                 showLabel: false,
                 activeTintColor: '#FFF0E9',
                 inactiveTintColor: Colors.gray100,
-                style: { backgroundColor: '#1D9044', height:55 },
+                style: { backgroundColor: '#1D9044', height:50 },
                 indicatorStyle: {
                     opacity: 0
                   }
@@ -69,6 +69,7 @@ export default function TabNavigation({ navigation, route }) {
                 initialParams={{
                     jsonToken: jsonToken,
                     userId: userId,
+                    testParam: false,
                 }}
                 options={{
                     tabBarIcon: ({ color }) => (

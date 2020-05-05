@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, RefreshControl, StyleSheet, BackHandler, Alert, Text, ImageBackground } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph, Colors, ProgressBar, Subheading } from 'react-native-paper';
+import { Avatar, Button, Card, Title, Paragraph, Colors, ProgressBar, Subheading, Searchbar, Appbar, TextInput } from 'react-native-paper';
 
-export default function HomeScreen({ navigation, route }) {
+export default function HomeScreen({ navigation, navigation: { setParams }, route }) {
   const [jsonToken, setJsonToken] = useState(route.params.jsonToken);
   const [userId, setUserId] = useState(route.params.userId);
 
@@ -12,15 +12,21 @@ export default function HomeScreen({ navigation, route }) {
   const [progressFetched, setProgressFetched] = useState(false);
 
   /**
-   *  Refresh on tab focus
+   *  Refresh if card was added
    */
   useEffect(() => {
+
     const unsubscribe = navigation.addListener('focus', (e) => {
-      onRefresh();
+      console.log(route.params.testParam);
+
+      if (route.params.testParam) {
+        navigation.setParams({ testParam: false });
+        onRefresh();
+      }
     });
 
     return unsubscribe;
-  }, [navigation]);
+  }, [route.params.testParam]);
 
   useEffect(() => {
     const backAction = () => {
@@ -186,12 +192,13 @@ export default function HomeScreen({ navigation, route }) {
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F1E3C8' }}>
-      <ScrollView style={styles.container} refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-        />
-      }
+      <ScrollView
+        style={styles.container} refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       >
         {progressFetched
           ?
@@ -223,5 +230,5 @@ const styles = StyleSheet.create({
     borderColor: '#FFF0E9',
     marginBottom: 10,
     borderRadius: 6
-  },
+  }
 });

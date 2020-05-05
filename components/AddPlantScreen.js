@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, RefreshControl, StyleSheet, ImageBackground } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph, Appbar, List, Snackbar, Subheading } from 'react-native-paper';
+import { Avatar, Button, Card, Title, Paragraph, List, Subheading, Modal, Portal, Searchbar } from 'react-native-paper';
+import { FloatingAction } from "react-native-floating-action";
 
 export default function AddPlantScreen({ navigation, route }) {
     const [jsonToken, setJsonToken] = useState(route.params.jsonToken);
@@ -11,12 +12,8 @@ export default function AddPlantScreen({ navigation, route }) {
     const [growthStages, setGrowthStages] = useState([]);
     const [cards, setCards] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
-
-    const [visible, setVisible] = useState(false);
-    const [snackText, setSnackText] = useState('');
-
-    const onToggleSnackBar = () => setVisible(!visible);
-    const onDismissSnackBar = () => setVisible(false);
+    const [searchVisible, setSearchVisible] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     async function tryToLogIn() {
         try {
@@ -116,8 +113,7 @@ export default function AddPlantScreen({ navigation, route }) {
             let responseStatus = await response.status;
 
             if (responseStatus == 200) {
-                setSnackText("Biljka dodana")
-                setVisible(true);
+                navigation.navigate('Home', { testParam: true, })
                 console.log("Added");
             }
             else {
@@ -177,6 +173,36 @@ export default function AddPlantScreen({ navigation, route }) {
             setRefreshing(false);
         });
     }
+    //<MaterialCommunityIcons name="clipboard-text-outline" color={color} size={28} />
+    const actions = [
+        {
+            text: "Search",
+            icon: require('../assets/search.png'),
+            name: "bt_search",
+            buttonSize: 34,
+            margin: 0,
+            color: '#1D9044',
+            position: 1,
+        },
+        {
+            text: "Sort",
+            icon: require('../assets/sort.png'),
+            name: "bt_sort",
+            buttonSize: 34,
+            margin: 0,
+            color: '#1D9044',
+            position: 2
+        },
+        {
+            text: "Add plant",
+            icon: require('../assets/camera.png'),
+            name: "bt_add_plant",
+            buttonSize: 34,
+            margin: 0,
+            color: '#1D9044',
+            position: 3
+        }
+    ];
 
     return (
         <View style={{ flex: 1, backgroundColor: '#F1E3C8' }}>
@@ -185,12 +211,15 @@ export default function AddPlantScreen({ navigation, route }) {
                 resizeMode: "cover",
                 justifyContent: "center"
             }}>
-                <ScrollView style={styles.container} refreshControl={
-                    <RefreshControl
-                        refreshing={refreshing}
-                        onRefresh={onRefresh}
-                    />
-                }>
+                <ScrollView
+                    style={styles.container}
+                    refreshControl={
+                        <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                        />
+                    }
+                >
                     {
                         cards.length > 0
                             ?
@@ -203,18 +232,29 @@ export default function AddPlantScreen({ navigation, route }) {
                         </Subheading>
                     }
                 </ScrollView>
-                <Snackbar
-                    visible={visible}
-                    onDismiss={onDismissSnackBar}
-                    action={{
-                        label: 'Ok',
-                        onPress: () => {
-                            onToggleSnackBar
-                        },
+                <Portal>
+                    <Modal visible={searchVisible} onDismiss={() => setSearchVisible(false)}>
+                        <Searchbar
+                            style={{marginLeft:40, marginRight:40, marginBottom: 100}}
+                            placeholder="Pretraživanje"
+                            onChangeText={(text) => { setSearchTerm(text) }}
+                            onIconPress={() => setSearchVisible(false)}
+                            value={searchTerm}
+                        />
+                    </Modal>
+                </Portal>
+                <FloatingAction
+                    position="left"
+                    actions={actions}
+                    distanceToEdge={5}
+                    buttonSize={34}
+                    color='#1D9044'
+                    onPressItem={name => {
+                        if (name === 'bt_search') {
+                            setSearchVisible(true);
+                        }
                     }}
-                >
-                    {snackText}
-                </Snackbar>
+                />
             </ImageBackground>
         </View>
     );
@@ -223,14 +263,32 @@ export default function AddPlantScreen({ navigation, route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingLeft: 44,
-        paddingRight: 44,
-        paddingTop: 5
     },
     card: {
         borderWidth: 10,
         borderColor: '#FFF0E9',
-        marginBottom: 10,
-        borderRadius: 6
+        marginTop: 5,
+        marginBottom: 5,
+        borderRadius: 6,
+        marginLeft: 44,
+        marginRight: 44,
+    },
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        left: -14,
+        bottom: 100,
+    },
+    fab1: {
+        position: 'absolute',
+        margin: 16,
+        left: -14,
+        bottom: 50,
+    },
+    fab2: {
+        position: 'absolute',
+        margin: 16,
+        left: -14,
+        bottom: 0,
     },
 });
