@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, RefreshControl, StyleSheet, BackHandler, Alert, Text, ImageBackground } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph, Colors, ProgressBar, Subheading, Searchbar, Appbar, TextInput } from 'react-native-paper';
+import { Avatar, Button, Card, Title, Paragraph, Colors, ProgressBar, Subheading, Searchbar, Appbar, TextInput, Divider } from 'react-native-paper';
 
 export default function HomeScreen({ navigation, navigation: { setParams }, route }) {
   const [jsonToken, setJsonToken] = useState(route.params.jsonToken);
@@ -163,13 +163,15 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
       }}>
         <Card.Title title={prog.plant.name} subtitle={prog.growth_stage.stage_title} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
         <Card.Content>
-          <Title>Očekivano vrijeme uzgoja</Title>
+          <Subheading>Očekivano vrijeme uzgoja:</Subheading>
           <Paragraph>{prog.growth_stage.stage_duration} dana</Paragraph>
-          <Title>Proteklo vrijeme</Title>
+          <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+          <Subheading>Proteklo vrijeme:</Subheading>
           <Paragraph>{elapsedTime(Date.parse(prog.started_on))}</Paragraph>
           <View style={{ paddingTop: 10, width: 150 }}>
             <ProgressBar progress={calculateProgress(Date.parse(prog.started_on), prog.growth_stage.stage_duration)} color={Colors.green500} />
           </View>
+          <Divider style={{ marginTop: 30 }} />
         </Card.Content>
         <Card.Actions>
           <Button
@@ -221,8 +223,8 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingLeft: 44,
-    paddingRight: 44,
+    paddingLeft: 20,
+    paddingRight: 20,
     paddingTop: 5
   },
   card: {

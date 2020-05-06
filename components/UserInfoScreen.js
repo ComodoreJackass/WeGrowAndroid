@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Alert, ImageBackground } from 'react-native';
-import { Avatar, Button, Subheading, Title, Appbar } from 'react-native-paper';
+import { Avatar, Button, Subheading, Title, Appbar, Card, Paragraph, Text, Divider } from 'react-native-paper';
 import moment from 'moment';
 
 export default function UserInfoScreen({ navigation, route }) {
@@ -64,46 +64,31 @@ export default function UserInfoScreen({ navigation, route }) {
             <ImageBackground source={require('../assets/bckgr.png')} style={{
                 flex: 1,
                 resizeMode: "cover",
-                paddingTop: 40
+                paddingTop: 10
             }}>
-                <View style={{ flexDirection: "row" }}>
-
-                    <View style={{ flex: 1 }}></View>
-
-                    <View style={{ flex: 3 }}>
-                        <View style={{ flexDirection: "column", paddingBottom: 40 }}>
-                            <Title>Upravljanje računom</Title>
-                            <Subheading style={{ paddingTop: 20 }}>Korisničko ime: {username} </Subheading>
-                            <Subheading style={{ paddingTop: 5 }}>Email: {email} </Subheading>
-                            <Subheading style={{ paddingTop: 5, paddingBottom: 40 }}>Datum registracije: {moment(date).format('DD.MM.YYYY')} </Subheading>
-
-                            <View style={{ flexDirection: "row", paddingTop: 60 }}>
-                                <Button
-                                    theme={{ roundness: 5 }}
-                                    style={{ padding: 10, flex: 1 }}
-                                    mode="contained"
-                                    onPress={() => navigation.navigate('Login')}
-                                >
-                                    Odjavi me
-                            </Button>
-                            </View>
-
-                            <View style={{ flexDirection: "row", paddingTop: 10 }}>
-                                <Button
-                                    theme={{ roundness: 5 }}
-                                    style={{ padding: 10, flex: 1 }}
-                                    mode="contained"
-                                    onPress={createTwoButtonAlert}
-                                >
-                                    Obriši račun
-                            </Button>
-                            </View>
-
-                        </View>
-                    </View>
-
-                    <View style={{ flex: 1 }}></View>
-                </View>
+                <Card style={styles.card}>
+                    <Card.Title title={"Upravljanje računom"} />
+                    <Card.Cover source={require('../assets/header.png')} style={{ height: "25%", marginLeft: 15, marginRight: 15 }} />
+                    <Card.Content style={{ padding: 15 }}>
+                        <Subheading>Korisničko ime:</Subheading>
+                        <Paragraph style={{ paddingLeft: 15 }}>{username}</Paragraph>
+                        <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+                        <Subheading>Email:</Subheading>
+                        <Paragraph style={{ paddingLeft: 15 }}>{email}</Paragraph>
+                        <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+                        <Subheading>Datum registracije:</Subheading>
+                        <Paragraph style={{ paddingLeft: 15 }}>{moment(date).format('DD.MM.YYYY')}</Paragraph>
+                        <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+                    </Card.Content>
+                    <Card.Actions style={{ flexDirection: 'row', justifyContent: 'space-around', paddingTop: 30 }}>
+                        <Button
+                            onPress={() => navigation.navigate('Login')}
+                        >Odjavi me</Button>
+                        <Button
+                            onPress={createTwoButtonAlert}
+                        >Obriši račun</Button>
+                    </Card.Actions>
+                </Card>
             </ImageBackground>
         </View>
     );
@@ -113,5 +98,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#F1E3C8',
+    },
+    card: {
+        borderWidth: 10,
+        borderColor: 'rgba(255, 255, 255, 0.8)',
+        borderRadius: 30,
+        marginLeft: 10,
+        marginRight: 10,
+        backgroundColor: 'rgba(255, 255, 255, 0.8)'
     }
 });

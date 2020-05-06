@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, RefreshControl, StyleSheet, ImageBackground } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph, List, Subheading, Modal, Portal, Searchbar } from 'react-native-paper';
+import { Avatar, Button, Card, Title, Paragraph, List, Subheading, Modal, Portal, Searchbar, Divider } from 'react-native-paper';
 import { FloatingAction } from "react-native-floating-action";
 
 export default function AddPlantScreen({ navigation, route }) {
@@ -11,6 +11,7 @@ export default function AddPlantScreen({ navigation, route }) {
     const [materials, setMaterials] = useState([]);
     const [growthStages, setGrowthStages] = useState([]);
     const [cards, setCards] = useState([]);
+
     const [refreshing, setRefreshing] = useState(false);
     const [searchVisible, setSearchVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -140,10 +141,12 @@ export default function AddPlantScreen({ navigation, route }) {
             <Card key={plant.id} style={styles.card}>
                 <Card.Title title={plant.name} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
                 <Card.Content>
-                    <Title>Opis</Title>
+                    <Subheading>Opis:</Subheading>
                     <Paragraph>{plant.summary}</Paragraph>
-                    <Title>Težina uzgoja</Title>
+                    <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+                    <Subheading>Težina uzgoja:</Subheading>
                     <Paragraph>{plant.difficulty}</Paragraph>
+                    <Divider style={{ marginBottom: 10, marginTop: 10 }} />
                     <List.Section>
                         <List.Accordion
                             style={{ marginLeft: -24 }}
@@ -173,7 +176,74 @@ export default function AddPlantScreen({ navigation, route }) {
             setRefreshing(false);
         });
     }
-    //<MaterialCommunityIcons name="clipboard-text-outline" color={color} size={28} />
+
+    //Search implementation
+    useEffect(() => {
+        if (searchTerm != '') {
+            let tmp = plants.filter(plant => plant.name.toUpperCase().indexOf(searchTerm.toUpperCase()) == 0).map(plant => (
+                <Card key={plant.id} style={styles.card}>
+                    <Card.Title title={plant.name} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+                    <Card.Content>
+                        <Subheading>Opis:</Subheading>
+                        <Paragraph>{plant.summary}</Paragraph>
+                        <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+                        <Subheading>Težina uzgoja:</Subheading>
+                        <Paragraph>{plant.difficulty}</Paragraph>
+                        <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+                        <List.Section>
+                            <List.Accordion
+                                style={{ marginLeft: -24 }}
+                                title="Materijali"
+                                left={props => <List.Icon {...props}
+                                    icon={require('../assets/bucket2.png')} />}
+                            >
+                                {populateMaterials(plant.id)}
+                            </List.Accordion>
+                        </List.Section>
+                    </Card.Content>
+                    <Card.Actions>
+                        <Button
+                            onPress={() => tryToAdd(plant.id, getGrowthStage(plant.id))}
+                        >Dodaj</Button>
+                    </Card.Actions>
+                </Card>
+            ));
+
+            setCards(tmp);
+        } else {
+            let tmp = plants.map(plant => (
+                <Card key={plant.id} style={styles.card}>
+                    <Card.Title title={plant.name} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+                    <Card.Content>
+                        <Subheading>Opis:</Subheading>
+                        <Paragraph>{plant.summary}</Paragraph>
+                        <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+                        <Subheading>Težina uzgoja:</Subheading>
+                        <Paragraph>{plant.difficulty}</Paragraph>
+                        <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+                        <List.Section>
+                            <List.Accordion
+                                style={{ marginLeft: -24 }}
+                                title="Materijali"
+                                left={props => <List.Icon {...props}
+                                    icon={require('../assets/bucket2.png')} />}
+                            >
+                                {populateMaterials(plant.id)}
+                            </List.Accordion>
+                        </List.Section>
+                    </Card.Content>
+                    <Card.Actions>
+                        <Button
+                            onPress={() => tryToAdd(plant.id, getGrowthStage(plant.id))}
+                        >Dodaj</Button>
+                    </Card.Actions>
+                </Card>
+            ));
+
+            setCards(tmp);
+        }
+    }, [searchTerm]);
+
     const actions = [
         {
             text: "Search",
@@ -183,15 +253,6 @@ export default function AddPlantScreen({ navigation, route }) {
             margin: 0,
             color: '#1D9044',
             position: 1,
-        },
-        {
-            text: "Sort",
-            icon: require('../assets/sort.png'),
-            name: "bt_sort",
-            buttonSize: 34,
-            margin: 0,
-            color: '#1D9044',
-            position: 2
         },
         {
             text: "Add plant",
@@ -235,7 +296,7 @@ export default function AddPlantScreen({ navigation, route }) {
                 <Portal>
                     <Modal visible={searchVisible} onDismiss={() => setSearchVisible(false)}>
                         <Searchbar
-                            style={{marginLeft:40, marginRight:40, marginBottom: 100}}
+                            style={{ marginLeft: 40, marginRight: 40, marginBottom: 100 }}
                             placeholder="Pretraživanje"
                             onChangeText={(text) => { setSearchTerm(text) }}
                             onIconPress={() => setSearchVisible(false)}
@@ -266,12 +327,13 @@ const styles = StyleSheet.create({
     },
     card: {
         borderWidth: 10,
-        borderColor: '#FFF0E9',
+        borderColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
         marginTop: 5,
         marginBottom: 5,
         borderRadius: 6,
-        marginLeft: 44,
-        marginRight: 44,
+        marginLeft: 20,
+        marginRight: 20,
     },
     fab: {
         position: 'absolute',
