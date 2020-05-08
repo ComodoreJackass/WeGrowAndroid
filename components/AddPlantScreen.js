@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, RefreshControl, StyleSheet, ImageBackground } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph, List, Subheading, Modal, Portal, Searchbar, Divider } from 'react-native-paper';
-import { FloatingAction } from "react-native-floating-action";
+import { Avatar, Button, Card, Title, Paragraph, List, Subheading, Modal, Portal, Searchbar, Divider, FAB } from 'react-native-paper';
 
 export default function AddPlantScreen({ navigation, route }) {
     const [jsonToken, setJsonToken] = useState(route.params.jsonToken);
@@ -139,7 +138,14 @@ export default function AddPlantScreen({ navigation, route }) {
     useEffect(() => {
         let tmp = plants.map(plant => (
             <Card key={plant.id} style={styles.card}>
-                <Card.Title title={plant.name} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+                <ImageBackground source={{ uri: `data:image/jpg;base64,${plant.image}` }} style={{
+                    flex: 1,
+                    resizeMode: "cover"
+                }}>
+                    <View style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}>
+                        <Card.Title title={plant.name} titleStyle={{ color: "#373D3F" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+                    </View>
+                </ImageBackground>
                 <Card.Content>
                     <Subheading>Opis:</Subheading>
                     <Paragraph>{plant.summary}</Paragraph>
@@ -182,7 +188,14 @@ export default function AddPlantScreen({ navigation, route }) {
         if (searchTerm != '') {
             let tmp = plants.filter(plant => plant.name.toUpperCase().indexOf(searchTerm.toUpperCase()) == 0).map(plant => (
                 <Card key={plant.id} style={styles.card}>
-                    <Card.Title title={plant.name} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+                    <ImageBackground source={{ uri: `data:image/jpg;base64,${plant.image}` }} style={{
+                        flex: 1,
+                        resizeMode: "cover"
+                    }}>
+                        <View style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}>
+                            <Card.Title title={plant.name} titleStyle={{ color: "#373D3F" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+                        </View>
+                    </ImageBackground>
                     <Card.Content>
                         <Subheading>Opis:</Subheading>
                         <Paragraph>{plant.summary}</Paragraph>
@@ -213,7 +226,14 @@ export default function AddPlantScreen({ navigation, route }) {
         } else {
             let tmp = plants.map(plant => (
                 <Card key={plant.id} style={styles.card}>
-                    <Card.Title title={plant.name} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+                    <ImageBackground source={{ uri: `data:image/jpg;base64,${plant.image}` }} style={{
+                        flex: 1,
+                        resizeMode: "cover"
+                    }}>
+                        <View style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}>
+                            <Card.Title title={plant.name} titleStyle={{ color: "#373D3F" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+                        </View>
+                    </ImageBackground>
                     <Card.Content>
                         <Subheading>Opis:</Subheading>
                         <Paragraph>{plant.summary}</Paragraph>
@@ -243,27 +263,6 @@ export default function AddPlantScreen({ navigation, route }) {
             setCards(tmp);
         }
     }, [searchTerm]);
-
-    const actions = [
-        {
-            text: "Search",
-            icon: require('../assets/search.png'),
-            name: "bt_search",
-            buttonSize: 34,
-            margin: 0,
-            color: '#1D9044',
-            position: 1,
-        },
-        {
-            text: "Add plant",
-            icon: require('../assets/camera.png'),
-            name: "bt_add_plant",
-            buttonSize: 34,
-            margin: 0,
-            color: '#1D9044',
-            position: 3
-        }
-    ];
 
     return (
         <View style={{ flex: 1, backgroundColor: '#F1E3C8' }}>
@@ -304,17 +303,15 @@ export default function AddPlantScreen({ navigation, route }) {
                         />
                     </Modal>
                 </Portal>
-                <FloatingAction
-                    position="left"
-                    actions={actions}
-                    distanceToEdge={5}
-                    buttonSize={34}
-                    color='#1D9044'
-                    onPressItem={name => {
-                        if (name === 'bt_search') {
-                            setSearchVisible(true);
-                        }
+                <FAB
+                    style={{
+                        position: 'absolute',
+                        left: 2,
+                        bottom: 10,
                     }}
+                    small
+                    icon="magnify"
+                    onPress={() => setSearchVisible(true)}
                 />
             </ImageBackground>
         </View>
@@ -326,14 +323,14 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     card: {
-        borderWidth: 10,
-        borderColor: 'rgba(255, 255, 255, 0.8)',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        borderWidth: 1,
+        borderColor: "#FFF",
+        backgroundColor: "#FFF",
         marginTop: 5,
         marginBottom: 5,
         borderRadius: 6,
-        marginLeft: 20,
-        marginRight: 20,
+        marginLeft: 45,
+        marginRight: 30,
     },
     fab: {
         position: 'absolute',

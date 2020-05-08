@@ -22,6 +22,7 @@ export default function TabNavigation({ navigation, route }) {
     const [password, setPassowrd] = useState(route.params.password);
     const [email, setEmail] = useState(route.params.email);
     const [date, setDate] = useState(route.params.date);
+    const [numDone, setNumDone] = useState(0);
 
     const [size1, setSize1] = useState(24);
     const [size2, setSize2] = useState(32);
@@ -33,6 +34,10 @@ export default function TabNavigation({ navigation, route }) {
             userId: userId
         })
     }, [jsonToken, userId]);
+
+    useEffect(()=> {
+        console.log("Tab section " + numDone);
+    }, [numDone])
 
     return (
         <Tab.Navigator
@@ -70,6 +75,7 @@ export default function TabNavigation({ navigation, route }) {
                     jsonToken: jsonToken,
                     userId: userId,
                     testParam: false,
+                    numDone: numDone
                 }}
                 options={{
                     tabBarIcon: ({ color }) => (
@@ -86,7 +92,8 @@ export default function TabNavigation({ navigation, route }) {
                     username: username,
                     password: password,
                     email: email,
-                    date: date
+                    date: date,
+                    numDone: numDone,
                 }}
                 options={{
                     tabBarIcon: ({ color }) => (

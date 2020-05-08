@@ -10,6 +10,7 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
   const [cards, setCards] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [progressFetched, setProgressFetched] = useState(false);
+  const [plants, setPlants] = useState([]);
 
   /**
    *  Refresh if card was added
@@ -66,8 +67,34 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
 
       if (responseStatus == 200) {
         let json = await response.json();
+
         setProgress(json);
         setProgressFetched(true);
+      }
+      else {
+        console.log(responseStatus + " " + userId + " " + jsonToken);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function tryToGetPlants() {
+    try {
+      let response = await fetch('https://afternoon-depths-99413.herokuapp.com/plants', {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'authorization': 'Bearer ' + jsonToken
+        }
+      });
+      let responseStatus = await response.status;
+
+      if (responseStatus == 200) {
+        let json = await response.json();
+        setPlants(json);
+        tryToLogIn();
       }
       else {
         console.log(responseStatus + " " + userId + " " + jsonToken);
@@ -94,6 +121,34 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
 
       if (responseStatus == 200) {
         console.log("Deleted");
+        onRefresh();
+      }
+      else {
+        console.log(responseStatus);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function moveToDone(progId) {
+    try {
+      let response = await fetch('https://afternoon-depths-99413.herokuapp.com/progress/done', {
+        method: 'PATCH',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'authorization': 'Bearer ' + jsonToken
+        },
+        body: JSON.stringify({
+          progressId: progId,
+          done: 1
+        }),
+      });
+      let responseStatus = await response.status;
+
+      if (responseStatus == 200) {
+        console.log("Done");
         onRefresh();
       }
       else {
@@ -144,24 +199,32 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
   }
 
   useEffect(() => {
-    tryToLogIn();
+    tryToGetPlants();
   }, [jsonToken, userId]);
 
   useEffect(() => {
-    let tmp = progress.map(prog => (
+    let tmp = progress.filter(prog => !prog.done).map(prog => (
       <Card key={prog.id} style={styles.card} onPress={() => {
         navigation.navigate('Details', {
           jsonToken: jsonToken,
           userId: userId,
           progressId: prog.id,
           plantName: prog.plant.name,
+          pic: plants[prog.plant.id - 1].image,
           elapsedTime: elapsedTime(Date.parse(prog.started_on)),
           duration: prog.growth_stage.stage_duration,
           plantCare: prog.growth_stage.next_stage_text,
           plantInstructions: prog.growth_stage.description
         })
       }}>
-        <Card.Title title={prog.plant.name} subtitle={prog.growth_stage.stage_title} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+        <ImageBackground source={{ uri: `data:image/jpg;base64,${plants[prog.plant.id - 1].image}` }} style={{
+          flex: 1,
+          resizeMode: "cover"
+        }}>
+          <View style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}>
+            <Card.Title title={prog.plant.name} subtitle={prog.growth_stage.stage_title} titleStyle={{ color: "#373D3F"}} subtitleStyle={{ color: "#373D3F" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+          </View>
+        </ImageBackground>
         <Card.Content>
           <Subheading>Očekivano vrijeme uzgoja:</Subheading>
           <Paragraph>{prog.growth_stage.stage_duration} dana</Paragraph>
@@ -173,10 +236,13 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
           </View>
           <Divider style={{ marginTop: 30 }} />
         </Card.Content>
-        <Card.Actions>
+        <Card.Actions style={{ flexDirection: 'row', justifyContent: 'space-around', paddingTop: 5 }}>
           <Button
             onPress={() => tryToDelete(prog.id)}
           >Obriši</Button>
+          <Button
+            onPress={() => moveToDone(prog.id)}
+          >Gotovo</Button>
         </Card.Actions>
       </Card >
     ));
@@ -187,9 +253,10 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
 
   const onRefresh = () => {
     setRefreshing(true);
-    tryToLogIn().then(() => {
+    tryToGetPlants().then(() => {
       setRefreshing(false);
-    });
+    }
+    );
   }
 
   return (
@@ -228,8 +295,9 @@ const styles = StyleSheet.create({
     paddingTop: 5
   },
   card: {
-    borderWidth: 10,
-    borderColor: '#FFF0E9',
+    borderWidth: 2,
+    borderColor: "#FFF",
+    backgroundColor: "#FFF",
     marginBottom: 10,
     borderRadius: 6
   }

@@ -6,6 +6,7 @@ export default function PlantDetailsScreen({ navigation, route }) {
     const [jsonToken, setJsonToken] = useState(route.params.jsonToken);
     const [userId, setUserId] = useState(route.params.userId);
     const [progressId, setProgressId] = useState(route.params.progressId);
+    const [pic, setPic] = useState(route.params.pic);
 
     useEffect(() => {
         const backAction = () => {
@@ -35,7 +36,7 @@ export default function PlantDetailsScreen({ navigation, route }) {
                     })}
                 />
                 <Appbar.Content
-                    title="Detalji"
+                    title={route.params.plantName}
                 />
             </Appbar.Header>
             <View style={styles.container}>
@@ -45,7 +46,7 @@ export default function PlantDetailsScreen({ navigation, route }) {
                 }}>
                     <ScrollView>
                         <Card style={styles.card}>
-                            <Card.Cover source={require('../assets/placeholder.png')} style={{ marginLeft: 15, marginRight: 15 }}/>
+                            <Card.Cover source={{uri: `data:image/jpg;base64,${pic}`}} style={{ marginLeft: 15, marginRight: 15 }}/>
                             <Card.Content style={{ padding: 15 }}>
                                 <Subheading>Vrsta: povrće </Subheading>
                                 <Subheading>Vrijeme uzgoja: {route.params.duration} dana </Subheading>
