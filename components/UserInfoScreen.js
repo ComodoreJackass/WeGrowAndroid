@@ -128,7 +128,7 @@ export default function UserInfoScreen({ navigation, route }) {
                                     {
                                         (fill) => (
                                             <Subheading>
-                                                Razina: {Math.ceil(done/5)}
+                                                Razina: {Math.floor(done/5)}
                                             </Subheading>
                                         )
                                     }

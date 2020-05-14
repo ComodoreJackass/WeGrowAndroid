@@ -214,7 +214,8 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
           elapsedTime: elapsedTime(Date.parse(prog.started_on)),
           duration: prog.growth_stage.stage_duration,
           plantCare: prog.growth_stage.next_stage_text,
-          plantInstructions: prog.growth_stage.description
+          plantInstructions: prog.growth_stage.description,
+          hasSensors: prog.has_sensors
         })
       }}>
         <ImageBackground source={{ uri: `data:image/jpg;base64,${plants[prog.plant.id - 1].image}` }} style={{
