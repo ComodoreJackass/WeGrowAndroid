@@ -86,19 +86,19 @@ export default function PlantDetailsScreen({ navigation, route }) {
 
                 if (topic === "s1/tmpzrak") {
                     setTmpZraka(message.toString());
-                    setProgTmpZraka(parseFloat(message.toString()) + 40);
+                    setProgTmpZraka((parseFloat(message.toString()) + 40) / 100);
                 }
                 else if (topic === "s1/tmptlo") {
                     setTmpTla(message.toString());
-                    setProgTmpTla(parseFloat(message.toString()) + 40);
+                    setProgTmpTla((parseFloat(message.toString()) + 40) / 100);
                 }
                 else if (topic === "s1/vlzrak") {
                     setVlagaZraka(message.toString());
-                    setProgVlagaZraka(parseFloat(message.toString()));
+                    setProgVlagaZraka((parseFloat(message.toString()) / 100));
                 }
                 else if (topic === "s1/vltlo") {
                     setVlagaTla(message.toString());
-                    setProgVlagaTla(parseFloat(message.toString()));
+                    setProgVlagaTla((parseFloat(message.toString())) / 100);
                 }
             });
         }
