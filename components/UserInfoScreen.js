@@ -115,9 +115,9 @@ export default function UserInfoScreen({ navigation, route }) {
                     <Card style={styles.card}>
                         <Card.Title title={"Upravljanje računom"} />
                         <Card.Cover source={require('../assets/header.png')}/>
-                        <Card.Content style={{ padding: 15, paddingTop: 20 }}>
-                            <Subheading>Vještina uzgoja:</Subheading>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingTop:10 }}>
+                        <Card.Content style={{ padding: 15, paddingTop: 20}}>
+                            <Subheading style={{paddingLeft:"10%"}}>Vještina uzgoja:</Subheading>
+                            <View style={{ flexDirection: 'row', paddingLeft:"20%", paddingTop:10 }}>
                                 <AnimatedCircularProgress
                                     size={120}
                                     width={15}
@@ -135,16 +135,16 @@ export default function UserInfoScreen({ navigation, route }) {
                                 </AnimatedCircularProgress>
                             </View>
                             <Divider style={{ marginBottom: 10, marginTop: 20 }} />
-                            <Subheading>Uzgojeno biljaka: {done}</Subheading>
+                            <Subheading style={{paddingLeft:"10%"}}>Uzgojeno biljaka: {done}</Subheading>
                             <Divider style={{ marginBottom: 10, marginTop: 10 }} />
-                            <Subheading>Korisničko ime:</Subheading>
-                            <Paragraph style={{ paddingLeft: 15 }}>{username}</Paragraph>
+                            <Subheading style={{paddingLeft:"10%"}}>Korisničko ime:</Subheading>
+                            <Paragraph style={{ paddingLeft:"15%" }}>{username}</Paragraph>
                             <Divider style={{ marginBottom: 10, marginTop: 10 }} />
-                            <Subheading>Email:</Subheading>
-                            <Paragraph style={{ paddingLeft: 15 }}>{email}</Paragraph>
+                            <Subheading style={{paddingLeft:"10%"}}>Email:</Subheading>
+                            <Paragraph style={{paddingLeft:"15%" }}>{email}</Paragraph>
                             <Divider style={{ marginBottom: 10, marginTop: 10 }} />
-                            <Subheading>Datum registracije:</Subheading>
-                            <Paragraph style={{ paddingLeft: 15 }}>{moment(date).format('DD.MM.YYYY')}</Paragraph>
+                            <Subheading style={{paddingLeft:"10%"}}>Datum registracije:</Subheading>
+                            <Paragraph style={{paddingLeft:"15%" }}>{moment(date).format('DD.MM.YYYY')}</Paragraph>
                             <Divider style={{ marginTop: 10 }} />
                         </Card.Content>
                         <Card.Actions style={{ flexDirection: 'row', justifyContent: 'space-around' }}>

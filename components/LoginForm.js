@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ImageBackground, ActivityIndicator } from 'react-native';
+import { View, ScrollView, RefreshControl, StyleSheet, ImageBackground, ActivityIndicator, Text } from 'react-native';
 import { Button, Snackbar, TextInput, Title, Avatar, Colors, Divider, Portal } from 'react-native-paper';
 
 export default function LoginForm({ navigation, route }) {
@@ -91,23 +91,29 @@ export default function LoginForm({ navigation, route }) {
                 resizeMode: "cover",
                 justifyContent: "center"
             }}>
-                <View style={styles.container}>
-                    <View style={{ paddingTop: 40, paddingBottom: 20 }}>
+               <ScrollView refreshControl={
+                    <RefreshControl
+                        refreshing={loading}
+                        onRefresh={verifyInput}
+                    />
+                }
+                >
+                    <View style={styles.container}>
+                    <View style={{ paddingTop: "10%", paddingBottom: "5%" }}>
                         <Avatar.Icon size={90} icon="account" color={Colors.white} style={{ alignSelf: "center" }} />
-                        <View style={{ flexDirection: "row", justifyContent: "space-evenly", paddingBottom:20 }}>
+                        <View style={{ flexDirection: "row", justifyContent: "space-evenly", paddingBottom: "5%" }}>
                             <View style={{ flex: 1 }}></View>
-                            <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: 1, marginTop: 24 }} />
-                            <Title style={{ flex: 1.4, paddingTop: 5, textAlign: "center" }}>Prijava</Title>
-                            <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: 1, marginTop: 24 }} />
+                            <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: "0.2%", marginTop: "8.4%" }} />
+                            <Title style={{ flex: 1.4, paddingTop: "2.5%", textAlign: "center" }}>Prijava</Title>
+                            <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: "0.2%", marginTop: "8.4%" }} />
                             <View style={{ flex: 1 }}></View>
                         </View>
-                        {loading && <Portal.Host><ActivityIndicator color={"#fff"} size={'large'} /></Portal.Host>}
                     </View>
                     <TextInput
                         label='Korisničko ime'
                         mode='outlined'
                         theme={{ roundness: 50 }}
-                        style={{ backgroundColor: '#FFF6F2', marginLeft:"10%", marginRight:"10%" }}
+                        style={{ backgroundColor: '#FFF6F2', marginLeft: "6%", marginRight: "6%" }}
                         error={usernameValidated}
                         onChangeText={text => {
                             setUsername(text.toString());
@@ -119,7 +125,7 @@ export default function LoginForm({ navigation, route }) {
                         label='Lozinka'
                         mode='outlined'
                         theme={{ roundness: 50 }}
-                        style={{ backgroundColor: '#FFF6F2',  marginLeft:"10%", marginRight:"10%" }}
+                        style={{ backgroundColor: '#FFF6F2', marginLeft: "6%", marginRight: "6%" }}
                         error={passwordValidated}
                         secureTextEntry={true}
                         onChangeText={text => {
@@ -128,48 +134,51 @@ export default function LoginForm({ navigation, route }) {
                         }}
                         value={password}
                     />
-                    <View style={{ paddingTop: 50 }}>
+                    <View style={{ paddingTop: "28%" }}>
                         <Button
                             theme={{ roundness: 50 }}
-                            style={{ paddingTop: 10, paddingBottom: 10,  marginLeft:"10%", marginRight:"10%" }}
+                            style={{ paddingTop: "2%", paddingBottom: "2%", marginLeft: "6%", marginRight: "6%" }}
                             mode="contained"
                             onPress={verifyInput}
                         >
-                            Prijavite se
+                            Prijavi me
                         </Button>
                     </View>
-                    <View style={{ paddingTop: 80 }}>
-                        <Divider style={{ backgroundColor: '#1D9044', padding: 1 }} />
+                    <View style={{ paddingTop: "20%" }}>
+                        <Divider style={{ backgroundColor: '#1D9044', padding: "0.2%" }} />
                         <Button
                             theme={{ roundness: 5 }}
-                            style={{ paddingTop: 10, paddingBottom: 10 }}
+                            style={{ paddingTop: "2%", paddingBottom: "4%" }}
                             mode="text"
                             onPress={() => navigation.navigate('Register')}
-                        >
-                            Registracija
-                </Button>
+                        ><Text upercase={false}>
+                                Izrada računa
+                            </Text>
+                        </Button>
                     </View>
                 </View>
-                <Snackbar
-                    visible={visible}
-                    onDismiss={onDismissSnackBar}
-                    action={{
-                        label: 'Ok',
-                        onPress: () => {
-                            onToggleSnackBar
-                        },
-                    }}
-                >
-                    {snackText}
-                </Snackbar>
+                </ScrollView>
+            <Snackbar
+                visible={visible}
+                onDismiss={onDismissSnackBar}
+                action={{
+                    label: 'Ok',
+                    onPress: () => {
+                        onToggleSnackBar
+                    },
+                }}
+            >
+                {snackText}
+            </Snackbar>
             </ImageBackground>
-        </View>
+        </View >
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20
+        paddingLeft: "6%",
+        paddingRight: "6%"
     },
 });

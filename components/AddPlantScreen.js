@@ -149,7 +149,7 @@ export default function AddPlantScreen({ navigation, route }) {
                         <Card.Title title={plant.name} subtitle={'Odabir'} subtitleStyle={{ color: "#FFF0E9" }} titleStyle={{ color: "#FFF0E9" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
                     </View>
                 </ImageBackground>
-                <Card.Content>
+                <Card.Content style={{paddingTop:10}}>
                     <Subheading>Opis:</Subheading>
                     <Paragraph>{plant.summary}</Paragraph>
                     <Divider style={{ marginBottom: 10, marginTop: 10 }} />
@@ -199,7 +199,7 @@ export default function AddPlantScreen({ navigation, route }) {
                             <Card.Title title={plant.name} subtitle={'Odabir'} subtitleStyle={{ color: "#FFF0E9" }} titleStyle={{ color: "#FFF0E9" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
                         </View>
                     </ImageBackground>
-                    <Card.Content>
+                    <Card.Content style={{paddingTop:10}}>
                         <Subheading>Opis:</Subheading>
                         <Paragraph>{plant.summary}</Paragraph>
                         <Divider style={{ marginBottom: 10, marginTop: 10 }} />
@@ -237,7 +237,7 @@ export default function AddPlantScreen({ navigation, route }) {
                             <Card.Title title={plant.name} subtitle={'Odabir'} subtitleStyle={{ color: "#FFF0E9" }} titleStyle={{ color: "#FFF0E9" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
                         </View>
                     </ImageBackground>
-                    <Card.Content>
+                    <Card.Content style={{paddingTop:10}}>
                         <Subheading>Opis:</Subheading>
                         <Paragraph>{plant.summary}</Paragraph>
                         <Divider style={{ marginBottom: 10, marginTop: 10 }} />

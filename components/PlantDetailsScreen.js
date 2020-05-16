@@ -216,7 +216,7 @@ export default function PlantDetailsScreen({ navigation, route }) {
                     flex: 1,
                     resizeMode: "cover",
                 }}>
-                    <ScrollView>
+                    <ScrollView style={{paddingTop:5}}>
                         <Card style={styles.card}>
                             <Card.Cover source={{ uri: `data:image/jpg;base64,${pic}` }} />
                             <Card.Content style={{ padding: 15 }}>
@@ -337,8 +337,7 @@ export default function PlantDetailsScreen({ navigation, route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F1E3C8',
-        paddingTop: 10,
+        backgroundColor: '#F1E3C8'
     },
     row: {
         paddingTop: 40,
