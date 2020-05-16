@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ImageBackground } from 'react-native';
-import { Button } from 'react-native-paper';
+import { View, StyleSheet, ImageBackground, ActivityIndicator } from 'react-native';
+import { Button, Portal } from 'react-native-paper';
 import { TextInput, Snackbar, Title, Avatar, Colors, Divider } from 'react-native-paper';
 
 export default function RegisterForm({ navigation, route }) {
@@ -12,8 +12,10 @@ export default function RegisterForm({ navigation, route }) {
     const [passwordValidated, setPasswordValidated] = useState(false);
     const [visible, setVisible] = useState(false);
     const [snackText, setSnackText] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const verifyInput = () => {
+        setLoading(true);
         if (username === '') {
             setUsernameValidated(true);
         } else {
@@ -34,6 +36,8 @@ export default function RegisterForm({ navigation, route }) {
 
         if (username !== '' && password !== '' && email !== '') {
             tryToRegister();
+        } else {
+            setLoading(false);
         }
     }
 
@@ -54,6 +58,7 @@ export default function RegisterForm({ navigation, route }) {
             let responseStatus = await response.status;
 
             if (responseStatus == 200) {
+                setLoading(false);
                 navigation.navigate('Login', { post: 'Račun registriran. Prijavite se.' });
             }
             else if (responseStatus == 304) {
@@ -62,6 +67,7 @@ export default function RegisterForm({ navigation, route }) {
                 setEmail('');
                 setSnackText('Korisnik već postoji.');
                 setVisible(true);
+                setLoading(false);
             }
             else {
                 setUsername('');
@@ -69,8 +75,10 @@ export default function RegisterForm({ navigation, route }) {
                 setEmail('');
                 setSnackText('Greška:' + responseStatus);
                 setVisible(true);
+                setLoading(false);
             }
         } catch (error) {
+            setLoading(false);
             console.error(error);
         }
     }
@@ -86,21 +94,22 @@ export default function RegisterForm({ navigation, route }) {
                 justifyContent: "center"
             }}>
                 <View style={styles.container}>
-                    <View style={{ paddingTop: 40, paddingBottom: 40 }}>
+                    <View style={{ paddingTop: 40, paddingBottom: 20 }}>
                         <Avatar.Icon size={90} icon="account" color={Colors.white} style={{ alignSelf: "center" }} />
-                        <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+                        <View style={{ flexDirection: "row", justifyContent: "space-evenly", paddingBottom:20 }}>
                             <View style={{ flex: 1 }}></View>
                             <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: 1, marginTop: 24 }} />
                             <Title style={{ flex: 2.8, paddingTop: 5, textAlign: "center" }}>Registracija</Title>
                             <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: 1, marginTop: 24 }} />
                             <View style={{ flex: 1 }}></View>
                         </View>
+                        {loading && <Portal.Host><ActivityIndicator color={"#fff"} size={'large'} /></Portal.Host>}
                     </View>
                     <TextInput
                         label='Email'
                         error={emailValidated}
                         theme={{ roundness: 50 }}
-                        style={{ backgroundColor: '#FFF6F2' }}
+                        style={{ backgroundColor: '#FFF6F2', marginLeft:"10%", marginRight:"10%" }}
                         mode='outlined'
                         onChangeText={text => {
                             setEmail(text.toString());
@@ -112,7 +121,7 @@ export default function RegisterForm({ navigation, route }) {
                         label='Korisničko ime'
                         error={usernameValidated}
                         theme={{ roundness: 50 }}
-                        style={{ backgroundColor: '#FFF6F2' }}
+                        style={{ backgroundColor: '#FFF6F2',  marginLeft:"10%", marginRight:"10%" }}
                         mode='outlined'
                         onChangeText={text => {
                             setUsername(text.toString());
@@ -124,7 +133,7 @@ export default function RegisterForm({ navigation, route }) {
                         label='Lozinka'
                         error={passwordValidated}
                         theme={{ roundness: 50 }}
-                        style={{ backgroundColor: '#FFF6F2' }}
+                        style={{ backgroundColor: '#FFF6F2', marginLeft:"10%", marginRight:"10%" }}
                         mode='outlined'
                         secureTextEntry={true}
                         onChangeText={text => {
@@ -136,7 +145,7 @@ export default function RegisterForm({ navigation, route }) {
                     <View style={{ paddingTop: 30 }}>
                         <Button
                             theme={{ roundness: 50 }}
-                            style={{ paddingTop: 10, paddingBottom: 10 }}
+                            style={{ paddingTop: 10, paddingBottom: 10, marginLeft:"10%", marginRight:"10%" }}
                             mode="contained"
                             onPress={verifyInput}
                         >
@@ -147,7 +156,7 @@ export default function RegisterForm({ navigation, route }) {
                         <Divider style={{ backgroundColor: '#1D9044', padding: 1 }} />
                         <Button
                             theme={{ roundness: 5 }}
-                            style={{ paddingTop: 10, paddingBottom: 10 }}
+                            style={{ paddingTop: 10, paddingBottom: 10, marginLeft:"10%", marginRight:"10%" }}
                             mode="text"
                             onPress={() => navigation.navigate('Login')}
                         >

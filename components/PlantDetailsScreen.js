@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet, Text, BackHandler, ImageBackground } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph, Appbar, Headline, ProgressBar, Colors, List, Checkbox, Subheading, Divider } from 'react-native-paper';
+import { View, ScrollView, RefreshControl, StyleSheet, Text, BackHandler, ImageBackground, TouchableOpacity } from 'react-native';
+import { TouchableRipple, Button, Card, Title, Paragraph, Appbar, TextInput, ProgressBar, Colors, List, Portal, Dialog, Subheading, Divider } from 'react-native-paper';
 
 var mqtt = require('mqtt/dist/mqtt');
-var client = mqtt.connect("mqtts://m24.cloudmqtt.com:30991", { clientId: "jelMeNekoTrazio", username: "web", password: "a" });
+var client; //= mqtt.connect("mqtts://m24.cloudmqtt.com:30991", { clientId: "jelMeNekoTrazio", username: "web", password: "a" });
 
 export default function PlantDetailsScreen({ navigation, route }) {
     const [jsonToken, setJsonToken] = useState(route.params.jsonToken);
     const [userId, setUserId] = useState(route.params.userId);
     const [progressId, setProgressId] = useState(route.params.progressId);
     const [pic, setPic] = useState(route.params.pic);
-
+    const [showDialog, setShowDialog] = useState(false);
     const [enableSensors, setEnableSensors] = useState(route.params.hasSensors);
 
     const [tmpZraka, setTmpZraka] = useState('X');
@@ -27,10 +27,8 @@ export default function PlantDetailsScreen({ navigation, route }) {
 
     useEffect(() => {
         const backAction = () => {
-            navigation.navigate('Tab', {
-                jsonToken: jsonToken,
-                userId: userId
-            });
+            unsubscribe();
+            navigation.navigate('Home', { testParam: true, })
             return true;
         };
 
@@ -44,6 +42,8 @@ export default function PlantDetailsScreen({ navigation, route }) {
     }, []);
 
     const subscribeToTopics = () => {
+
+        client = mqtt.connect("mqtts://m24.cloudmqtt.com:30991", { clientId: "jelMeNekoTrazio", username: "web", password: "a" });
         console.log("connected flag  " + client.connected);
 
         setTmpZraka("...");
@@ -63,6 +63,34 @@ export default function PlantDetailsScreen({ navigation, route }) {
             "s1/vltlo": { qos: 0 },
         });
 
+        console.log("listening")
+        client.on("error", function (error) {
+            console.log("Can't connect" + error);
+            process.exit(1)
+        });
+
+        client.on('message', function (topic, message, packet) {
+            console.log("message is " + message);
+            console.log("topic is " + topic);
+
+            if (topic === "s1/tmpzrak") {
+                setTmpZraka(message.toString() + '°C');
+                setProgTmpZraka((parseFloat(message.toString()) + 40) / 100);
+            }
+            else if (topic === "s1/tmptlo") {
+                setTmpTla(message.toString() + '°C');
+                setProgTmpTla((parseFloat(message.toString()) + 40) / 100);
+            }
+            else if (topic === "s1/vlzrak") {
+                setVlagaZraka(message.toString() + '%');
+                setProgVlagaZraka((parseFloat(message.toString()) / 100));
+            }
+            else if (topic === "s1/vltlo") {
+                setVlagaTla(message.toString() + '%');
+                setProgVlagaTla((parseFloat(message.toString())) / 100);
+            }
+        });
+
         console.log("end of script");
     };
 
@@ -71,38 +99,6 @@ export default function PlantDetailsScreen({ navigation, route }) {
             subscribeToTopics();
         }
     }, [enableSensors]);
-
-    useEffect(() => {
-        if (enableSensors) {
-            console.log("listening")
-            client.on("error", function (error) {
-                console.log("Can't connect" + error);
-                process.exit(1)
-            });
-
-            client.on('message', function (topic, message, packet) {
-                console.log("message is " + message);
-                console.log("topic is " + topic);
-
-                if (topic === "s1/tmpzrak") {
-                    setTmpZraka(message.toString());
-                    setProgTmpZraka((parseFloat(message.toString()) + 40) / 100);
-                }
-                else if (topic === "s1/tmptlo") {
-                    setTmpTla(message.toString());
-                    setProgTmpTla((parseFloat(message.toString()) + 40) / 100);
-                }
-                else if (topic === "s1/vlzrak") {
-                    setVlagaZraka(message.toString());
-                    setProgVlagaZraka((parseFloat(message.toString()) / 100));
-                }
-                else if (topic === "s1/vltlo") {
-                    setVlagaTla(message.toString());
-                    setProgVlagaTla((parseFloat(message.toString())) / 100);
-                }
-            });
-        }
-    })
 
     async function setSensors(progId, sensor) {
         try {
@@ -137,7 +133,7 @@ export default function PlantDetailsScreen({ navigation, route }) {
         setTmpTla("X");
         setVlagaTla("X");
         setVlagaZraka("X");
-        client = mqtt.connect("mqtts://m24.cloudmqtt.com:30991", { clientId: "jelMeNekoTrazio", username: "web", password: "a" });
+        //client = mqtt.connect("mqtts://m24.cloudmqtt.com:30991", { clientId: "jelMeNekoTrazio", username: "web", password: "a" });
     }
 
     return (
@@ -160,57 +156,97 @@ export default function PlantDetailsScreen({ navigation, route }) {
                 }}>
                     <ScrollView>
                         <Card style={styles.card}>
-                            <Card.Cover source={{ uri: `data:image/jpg;base64,${pic}` }} style={{ marginLeft: 15, marginRight: 15 }} />
+                            <Card.Cover source={{ uri: `data:image/jpg;base64,${pic}` }} />
                             <Card.Content style={{ padding: 15 }}>
                                 <Subheading>Vrsta: povrće </Subheading>
                                 <Subheading>Vrijeme uzgoja: {route.params.duration} dana </Subheading>
                                 <Subheading>Proteklo vrijeme: {route.params.elapsedTime}</Subheading>
 
-                                <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+                                <TouchableOpacity onPress={() => {
+                                    setShowDialog(true);
+                                }}>
+                                    <View>
+                                        <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+                                        <Portal>
+                                            <Dialog
+                                                visible={showDialog}
+                                                onDismiss={() => setShowDialog(false)}>
+                                                {!enableSensors
+                                                    ?
+                                                    <View>
+                                                        <Dialog.Title>Povezivanje sa senzorima</Dialog.Title>
+                                                        <Dialog.Content>
+                                                            <Paragraph>Unesite id i lozinku senzora kako bi započeli pračenje razvoja biljke.</Paragraph>
+                                                            <TextInput
+                                                                label='id'
+                                                            />
+                                                            <TextInput
+                                                                label='lozinka'
+                                                            />
+                                                        </Dialog.Content>
+                                                        <Dialog.Actions>
+                                                            <Button onPress={() => setShowDialog(false)}>Odustani</Button>
+                                                            <Button onPress={() => {subscribeToTopics(); setEnableSensors(true); setSensors(progressId, 1); setShowDialog(false);}}>Spoji me</Button>
+                                                        </Dialog.Actions>
+                                                    </View>
+                                                    :
+                                                    <View>
+                                                        <Dialog.Title>Raskid veze sa senzorima</Dialog.Title>
+                                                        <Dialog.Content>
+                                                            <Paragraph>Želite li prestati pratiti biljku.</Paragraph>
+                                                        </Dialog.Content>
+                                                        <Dialog.Actions>
+                                                            <Button onPress={() => setShowDialog(false)}>Odustani</Button>
+                                                            <Button onPress={() => { setEnableSensors(false); setSensors(progressId, 0); unsubscribe(); setShowDialog(false);}}>Raskini vezu</Button>
+                                                        </Dialog.Actions>
+                                                    </View>
+                                                }
+                                            </Dialog>
+                                        </Portal>
 
-                                <Button
-                                    onPress={() => {
-                                        if (enableSensors) {
-                                            setEnableSensors(false); setSensors(progressId, 0); unsubscribe();
-                                        } else {
-                                            subscribeToTopics(); setEnableSensors(true); setSensors(progressId, 1);
+                                        {
+                                            enableSensors
+                                                ?
+                                                <View>
+                                                    <View style={styles.row2}>
+                                                        <View style={{
+                                                            flexDirection: 'column',
+                                                            flex: 1
+                                                        }}>
+                                                            <Paragraph>Vlaga zraka {vlagaZraka}</Paragraph>
+                                                            <ProgressBar progress={progVlagaZraka} color={Colors.blue500} style={{ width: 100 }} />
+                                                        </View>
+                                                        <View style={{
+                                                            flexDirection: 'column',
+                                                            flex: 1
+                                                        }}>
+                                                            <Paragraph>Tmp zraka: {tmpZraka}</Paragraph>
+                                                            <ProgressBar progress={progTmpZraka} color={Colors.red800} style={{ width: 100 }} />
+                                                        </View>
+                                                    </View>
+                                                    <View style={styles.row2}>
+                                                        <View style={{
+                                                            flexDirection: 'column',
+                                                            flex: 1
+                                                        }}>
+                                                            <Paragraph>Vlaga tla: {vlagaTla}</Paragraph>
+                                                            <ProgressBar progress={progVlagaTla} color={Colors.blue500} style={{ width: 100 }} />
+                                                        </View>
+                                                        <View style={{
+                                                            flexDirection: 'column',
+                                                            flex: 1
+                                                        }}>
+                                                            <Paragraph>Tmp tla: {tmpTla}</Paragraph>
+                                                            <ProgressBar progress={progTmpTla} color={Colors.red800} style={{ width: 100 }} />
+                                                        </View>
+                                                    </View>
+                                                </View>
+                                                :
+                                                <Paragraph style={{ marginBottom: 20, marginTop: 20 }}>Dodirnite kako bi spojili senzore.</Paragraph>
                                         }
-                                    }}
-                                >
-                                    Senzori
-                                </Button>
-
-                                <View style={styles.row}>
-                                    <View style={{
-                                        flexDirection: 'column',
-                                    }}>
-                                        <Paragraph>Vlaga tla: {vlagaTla}</Paragraph>
-                                        <ProgressBar progress={progVlagaTla} color={Colors.blue500} style={{ width: 100 }} />
+                                        <Divider style={{ marginBottom: 10, marginTop: 10 }} />
                                     </View>
-                                    <View style={{
-                                        flexDirection: 'column',
-                                    }}>
-                                        <Paragraph>Tmp tla: {tmpTla}</Paragraph>
-                                        <ProgressBar progress={progTmpTla} color={Colors.red800} style={{ width: 100 }} />
-                                    </View>
-                                </View>
-
-                                <View style={styles.row2}>
-                                    <View style={{
-                                        flexDirection: 'column',
-                                    }}>
-                                        <Paragraph>Vlaga zraka {vlagaZraka}</Paragraph>
-                                        <ProgressBar progress={progVlagaZraka} color={Colors.blue500} style={{ width: 100 }} />
-                                    </View>
-                                    <View style={{
-                                        flexDirection: 'column',
-                                    }}>
-                                        <Paragraph>Tmp zraka: {tmpZraka}</Paragraph>
-                                        <ProgressBar progress={progTmpZraka} color={Colors.red800} style={{ width: 100 }} />
-                                    </View>
-                                </View>
-
-                                <Divider style={{ marginBottom: 10, marginTop: 10 }} />
+                                </TouchableOpacity>
 
                                 <List.Section style={{ marginLeft: -20 }}>
                                     <List.Accordion
@@ -244,13 +280,13 @@ const styles = StyleSheet.create({
     },
     row: {
         paddingTop: 40,
-        paddingBottom: 40,
+        paddingBottom: 20,
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-around',
     },
     row2: {
-        paddingBottom: 40,
+        paddingBottom: 20,
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-around',

@@ -114,7 +114,7 @@ export default function UserInfoScreen({ navigation, route }) {
                 }}>
                     <Card style={styles.card}>
                         <Card.Title title={"Upravljanje računom"} />
-                        <Card.Cover source={require('../assets/header.png')} style={{ marginLeft: 15, marginRight: 15 }} />
+                        <Card.Cover source={require('../assets/header.png')}/>
                         <Card.Content style={{ padding: 15, paddingTop: 20 }}>
                             <Subheading>Vještina uzgoja:</Subheading>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingTop:10 }}>

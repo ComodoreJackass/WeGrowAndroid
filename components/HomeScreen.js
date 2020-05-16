@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, ScrollView, RefreshControl, StyleSheet, BackHandler, Alert, Text, ImageBackground } from 'react-native';
-import { Avatar, Button, Card, Title, Paragraph, Colors, ProgressBar, Subheading, Searchbar, Appbar, TextInput, Divider } from 'react-native-paper';
+import { Avatar, Button, Card, Title, Paragraph, Colors, ProgressBar, Subheading, IconButton, Appbar, TextInput, Divider } from 'react-native-paper';
 
 export default function HomeScreen({ navigation, navigation: { setParams }, route }) {
   const [jsonToken, setJsonToken] = useState(route.params.jsonToken);
@@ -8,7 +8,7 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
 
   const [progress, setProgress] = useState([]);
   const [cards, setCards] = useState([]);
-  const [refreshing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(true);
   const [progressFetched, setProgressFetched] = useState(false);
   const [plants, setPlants] = useState([]);
 
@@ -70,12 +70,15 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
 
         setProgress(json);
         setProgressFetched(true);
+        setRefreshing(false);
       }
       else {
         console.log(responseStatus + " " + userId + " " + jsonToken);
+        setRefreshing(false);
       }
     } catch (error) {
       console.error(error);
+      setRefreshing(false);
     }
   }
 
@@ -159,28 +162,39 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
     }
   }
 
+
+  async function watered(progId) {
+    try {
+      let response = await fetch('https://afternoon-depths-99413.herokuapp.com/progress/lastWateredOn', {
+        method: 'PATCH',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'authorization': 'Bearer ' + jsonToken
+        },
+        body: JSON.stringify({
+          progressId: progId
+        }),
+      });
+      let responseStatus = await response.status;
+
+      if (responseStatus == 200) {
+        console.log("Done");
+        onRefresh();
+      }
+      else {
+        console.log(responseStatus);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   function elapsedTime(time) {
     let days = Math.floor((Date.now() - time) / (60000 * 60 * 24));
     let hours = Math.floor((Date.now() - time) / (60000 * 60)) % 24;
 
-    let elapsedTime = "";
-
-    if (days == 0) {
-      elapsedTime += "0 dana ";
-    } else if (days == 1) {
-      elapsedTime += days + " dan ";
-    } else {
-      elapsedTime += days + " dana ";
-    }
-
-    if (hours == 0) {
-      elapsedTime += "0 sati";
-    } else if (hours == 1) {
-      elapsedTime += hours + " sat ";
-    } else {
-      elapsedTime += hours + " sata ";
-    }
-
+    let elapsedTime = days + "d " + hours + "h";
     return elapsedTime
 
   }
@@ -198,11 +212,27 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
     }
   }
 
+
+  function calculateProgressPerHour(started, expected) {
+
+    let expectedDays = parseInt(expected.split("-")[0]) * 24;
+    let currDiff = Math.floor((Date.now() - started) / (60000 * 60));
+
+    if (currDiff > 0) {
+      return currDiff / expectedDays;
+    }
+    else {
+      return 0;
+    }
+  }
+
   useEffect(() => {
     tryToGetPlants();
   }, [jsonToken, userId]);
 
   useEffect(() => {
+    progress.sort((a, b) => { return a.id < b.id });
+
     let tmp = progress.filter(prog => !prog.done).map(prog => (
       <Card key={prog.id} style={styles.card} onPress={() => {
         navigation.navigate('Details', {
@@ -222,19 +252,32 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
           flex: 1,
           resizeMode: "cover"
         }}>
-          <View style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}>
-            <Card.Title title={prog.plant.name} subtitle={prog.growth_stage.stage_title} titleStyle={{ color: "#373D3F"}} subtitleStyle={{ color: "#373D3F" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+          <View style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
+            <Card.Title title={prog.plant.name} subtitle={prog.growth_stage.stage_title} titleStyle={{ color: "#FFF0E9" }} subtitleStyle={{ color: "#FFF0E9" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
           </View>
         </ImageBackground>
         <Card.Content>
           <Subheading>Očekivano vrijeme uzgoja:</Subheading>
           <Paragraph>{prog.growth_stage.stage_duration} dana</Paragraph>
           <Divider style={{ marginBottom: 10, marginTop: 10 }} />
-          <Subheading>Proteklo vrijeme:</Subheading>
+          <Subheading>Proteklo vrijeme od sadnje:</Subheading>
           <Paragraph>{elapsedTime(Date.parse(prog.started_on))}</Paragraph>
-          <View style={{ paddingTop: 10, width: 150 }}>
+          <View style={{ paddingTop: 10, width: 200 }}>
             <ProgressBar progress={calculateProgress(Date.parse(prog.started_on), prog.growth_stage.stage_duration)} color={Colors.green500} />
           </View>
+          <Divider style={{ marginBottom: 10, marginTop: 20 }} />
+          <Subheading>Zadnje zalijevanje prije:</Subheading>
+          <Paragraph>{elapsedTime(Date.parse(prog.last_watered_on))}</Paragraph>
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems:"center" }}>
+            <View style={{ paddingTop: 10, width: 200 }}>
+              <ProgressBar progress={1 - calculateProgressPerHour(Date.parse(prog.last_watered_on), "2-3")} color={Colors.blue300} />
+            </View>
+            <IconButton
+              icon="water-outline"
+              onPress={() => watered(prog.id)}
+            />
+          </View>
+
           <Divider style={{ marginTop: 30 }} />
         </Card.Content>
         <Card.Actions style={{ flexDirection: 'row', justifyContent: 'space-around', paddingTop: 5 }}>
@@ -282,7 +325,11 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
               Swajpate lijevo kako bi dodali biljku na ekran za praćenje.
             </Subheading>
           :
-          <View style={{ flex: 1, backgroundColor: '#F1E3C8' }}></View>}
+          <Subheading
+            style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', paddingTop: 200 }}
+          >
+            Učitavanje...
+          </Subheading>}
       </ScrollView>
     </View >
   );

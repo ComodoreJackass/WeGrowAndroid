@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, ImageBackground } from 'react-native';
-import { Button, Snackbar, TextInput, Title, Avatar, Colors, Divider } from 'react-native-paper';
+import { View, StyleSheet, ImageBackground, ActivityIndicator } from 'react-native';
+import { Button, Snackbar, TextInput, Title, Avatar, Colors, Divider, Portal } from 'react-native-paper';
 
 export default function LoginForm({ navigation, route }) {
     const [username, setUsername] = useState('');
@@ -9,8 +9,10 @@ export default function LoginForm({ navigation, route }) {
     const [passwordValidated, setPasswordValidated] = useState(false);
     const [visible, setVisible] = useState(false);
     const [snackText, setSnackText] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const verifyInput = () => {
+        setLoading(true);
         if (username === '') {
             setUsernameValidated(true);
         } else {
@@ -25,6 +27,8 @@ export default function LoginForm({ navigation, route }) {
 
         if (username !== '' && password !== '') {
             tryToLogIn();
+        } else {
+            setLoading(false);
         }
     }
 
@@ -45,6 +49,7 @@ export default function LoginForm({ navigation, route }) {
             if (response.status == 200) {
                 let json = await response.json();
                 console.log("logged in");
+                setLoading(false);
                 navigation.navigate('Tab', {
                     jsonToken: json.accessToken,
                     userId: json.userId,
@@ -59,9 +64,11 @@ export default function LoginForm({ navigation, route }) {
                 setPassword('');
                 setSnackText('Korisničko ime ili lozinka ne postoje');
                 setVisible(true);
+                setLoading(false);
                 console.log(response.status);
             }
         } catch (error) {
+            setLoading(false);
             console.error(error);
         }
     }
@@ -85,21 +92,22 @@ export default function LoginForm({ navigation, route }) {
                 justifyContent: "center"
             }}>
                 <View style={styles.container}>
-                    <View style={{ paddingTop: 40, paddingBottom: 40 }}>
+                    <View style={{ paddingTop: 40, paddingBottom: 20 }}>
                         <Avatar.Icon size={90} icon="account" color={Colors.white} style={{ alignSelf: "center" }} />
-                        <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+                        <View style={{ flexDirection: "row", justifyContent: "space-evenly", paddingBottom:20 }}>
                             <View style={{ flex: 1 }}></View>
                             <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: 1, marginTop: 24 }} />
                             <Title style={{ flex: 1.4, paddingTop: 5, textAlign: "center" }}>Prijava</Title>
                             <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: 1, marginTop: 24 }} />
                             <View style={{ flex: 1 }}></View>
                         </View>
+                        {loading && <Portal.Host><ActivityIndicator color={"#fff"} size={'large'} /></Portal.Host>}
                     </View>
                     <TextInput
                         label='Korisničko ime'
                         mode='outlined'
                         theme={{ roundness: 50 }}
-                        style={{ backgroundColor: '#FFF6F2' }}
+                        style={{ backgroundColor: '#FFF6F2', marginLeft:"10%", marginRight:"10%" }}
                         error={usernameValidated}
                         onChangeText={text => {
                             setUsername(text.toString());
@@ -111,7 +119,7 @@ export default function LoginForm({ navigation, route }) {
                         label='Lozinka'
                         mode='outlined'
                         theme={{ roundness: 50 }}
-                        style={{ backgroundColor: '#FFF6F2' }}
+                        style={{ backgroundColor: '#FFF6F2',  marginLeft:"10%", marginRight:"10%" }}
                         error={passwordValidated}
                         secureTextEntry={true}
                         onChangeText={text => {
@@ -123,12 +131,12 @@ export default function LoginForm({ navigation, route }) {
                     <View style={{ paddingTop: 50 }}>
                         <Button
                             theme={{ roundness: 50 }}
-                            style={{ paddingTop: 10, paddingBottom: 10 }}
+                            style={{ paddingTop: 10, paddingBottom: 10,  marginLeft:"10%", marginRight:"10%" }}
                             mode="contained"
                             onPress={verifyInput}
                         >
                             Prijavite se
-                    </Button>
+                        </Button>
                     </View>
                     <View style={{ paddingTop: 80 }}>
                         <Divider style={{ backgroundColor: '#1D9044', padding: 1 }} />

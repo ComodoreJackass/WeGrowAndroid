@@ -11,7 +11,7 @@ export default function AddPlantScreen({ navigation, route }) {
     const [growthStages, setGrowthStages] = useState([]);
     const [cards, setCards] = useState([]);
 
-    const [refreshing, setRefreshing] = useState(false);
+    const [refreshing, setRefreshing] = useState(true);
     const [searchVisible, setSearchVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -80,12 +80,15 @@ export default function AddPlantScreen({ navigation, route }) {
             if (responseStatus == 200) {
                 let json = await response.json();
                 setGrowthStages(json);
+                setRefreshing(false);
             }
             else {
                 console.log(responseStatus + " " + userId + " " + jsonToken);
+                setRefreshing(false);
             }
         } catch (error) {
             console.error(error);
+            setRefreshing(false);
         }
     }
 
@@ -142,8 +145,8 @@ export default function AddPlantScreen({ navigation, route }) {
                     flex: 1,
                     resizeMode: "cover"
                 }}>
-                    <View style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}>
-                        <Card.Title title={plant.name} titleStyle={{ color: "#373D3F" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+                    <View style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
+                        <Card.Title title={plant.name} subtitle={'Odabir'} subtitleStyle={{ color: "#FFF0E9" }} titleStyle={{ color: "#FFF0E9" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
                     </View>
                 </ImageBackground>
                 <Card.Content>
@@ -192,8 +195,8 @@ export default function AddPlantScreen({ navigation, route }) {
                         flex: 1,
                         resizeMode: "cover"
                     }}>
-                        <View style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}>
-                            <Card.Title title={plant.name} titleStyle={{ color: "#373D3F" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+                        <View style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
+                            <Card.Title title={plant.name} subtitle={'Odabir'} subtitleStyle={{ color: "#FFF0E9" }} titleStyle={{ color: "#FFF0E9" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
                         </View>
                     </ImageBackground>
                     <Card.Content>
@@ -230,8 +233,8 @@ export default function AddPlantScreen({ navigation, route }) {
                         flex: 1,
                         resizeMode: "cover"
                     }}>
-                        <View style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}>
-                            <Card.Title title={plant.name} titleStyle={{ color: "#373D3F" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
+                        <View style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
+                            <Card.Title title={plant.name} subtitle={'Odabir'} subtitleStyle={{ color: "#FFF0E9" }} titleStyle={{ color: "#FFF0E9" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
                         </View>
                     </ImageBackground>
                     <Card.Content>
