@@ -144,7 +144,7 @@ export default function PlantDetailsScreen({ navigation, route }) {
                 setVlagaTla(message.toString() + '%');
                 setProgVlagaTla((parseFloat(message.toString())) / 100);
 
-                if (parseFloat(message.toString()) < 20 && notification) {
+                if (parseFloat(message.toString()) < 20 && !notification) {
                     setNotification(true);
                     pushNotification(route.params.plantName);
                 }
