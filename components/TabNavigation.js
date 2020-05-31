@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Dimensions } from 'react-native';
+import { Text, View, Dimensions, Image } from 'react-native';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -46,9 +46,9 @@ export default function TabNavigation({ navigation, route }) {
             tabBarOptions={{
                 showIcon: true,
                 showLabel: false,
-                activeTintColor: '#FFF0E9',
+                activeTintColor: 'black',
                 inactiveTintColor: Colors.gray100,
-                style: { backgroundColor: '#1D9044', height:50 },
+                style: { backgroundColor: '#EFF0EF', height:50 },
                 indicatorStyle: {
                     opacity: 0
                   }
@@ -61,10 +61,11 @@ export default function TabNavigation({ navigation, route }) {
                 initialParams={{
                     jsonToken: jsonToken,
                     userId: userId,
+                    username: username
                 }}
                 options={{
                     tabBarIcon: ({ color }) => (
-                        <MaterialCommunityIcons name="flower-outline" color={color} size={28} />
+                        <Image source={require('../assets/addPlants.png')} tintColor={color}/>
                     ),
                 }}
             />
@@ -79,7 +80,7 @@ export default function TabNavigation({ navigation, route }) {
                 }}
                 options={{
                     tabBarIcon: ({ color }) => (
-                        <MaterialCommunityIcons name="clipboard-text-outline" color={color} size={28} />
+                        <Image source={require('../assets/myPlants.png')} tintColor={color} />
                     ),
                 }}
             />
@@ -97,7 +98,7 @@ export default function TabNavigation({ navigation, route }) {
                 }}
                 options={{
                     tabBarIcon: ({ color }) => (
-                        <MaterialCommunityIcons name="account" color={color} size={28} />
+                        <Image source={require('../assets/account.png')} tintColor={color} />
                     ),
                 }}
             />

@@ -10,6 +10,9 @@ import UserInfoScreen from './components/UserInfoScreen'
 import AddPlantScreen from './components/AddPlantScreen'
 import PlantDetailsScreen from './components/PlantDetailsScreen'
 import TabNavigation from './components/TabNavigation'
+import PlantBrowser from './components/PlantBrowser'
+import QR from './components/qr'
+import InsertPlant from './components/InsertPlant'
 
 const Stack = createStackNavigator();
 
@@ -18,10 +21,10 @@ const theme = {
   roundness: 2,
   colors: {
     ...DefaultTheme.colors,
-    primary: '#1D9044',
+    primary: '#79C52A',
     accent: '#7EBF88',
     surface: '#FFF0E9',
-    placeholder: '#1D9044',
+    placeholder: '#79C52A',
     text: Colors.grey800
   },
 };
@@ -53,6 +56,18 @@ export default function App() {
             <Stack.Screen
               name="Tab"
               component={TabNavigation}
+            />
+            <Stack.Screen
+              name="PlantBrowser"
+              component={PlantBrowser}
+            />
+            <Stack.Screen
+              name="QR"
+              component={QR}
+            />
+            <Stack.Screen
+              name="Insert"
+              component={InsertPlant}
             />
           </Stack.Navigator>
         </NavigationContainer>

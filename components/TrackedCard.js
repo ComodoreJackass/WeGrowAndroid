@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet, BackHandler, Alert, Text, ImageBackground } from 'react-native';
+import { View, ScrollView, RefreshControl, StyleSheet, BackHandler, Alert, Text, Image } from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, Colors, ProgressBar, Subheading, IconButton, Appbar, TextInput, Divider } from 'react-native-paper';
 import PushNotification from "react-native-push-notification";
 
@@ -126,68 +126,14 @@ export default function TrackedCard(props) {
         }
     }
 
-    async function moveToDone(progId) {
-        try {
-            let response = await fetch('https://afternoon-depths-99413.herokuapp.com/progress/done', {
-                method: 'PATCH',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'authorization': 'Bearer ' + props.jsonToken
-                },
-                body: JSON.stringify({
-                    progressId: progId,
-                    done: 1
-                }),
-            });
-            let responseStatus = await response.status;
-
-            if (responseStatus == 200) {
-                console.log("Done");
-                props.onRefresh();
-            }
-            else {
-                console.log(responseStatus);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    async function tryToDelete(progId) {
-        try {
-            let response = await fetch('https://afternoon-depths-99413.herokuapp.com/progress', {
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'authorization': 'Bearer ' + props.jsonToken
-                },
-                body: JSON.stringify({
-                    progressId: progId
-                }),
-            });
-            let responseStatus = await response.status;
-
-            if (responseStatus == 200) {
-                console.log("Deleted");
-                props.onRefresh();
-            }
-            else {
-                console.log(responseStatus);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
     return (
         <Card
             style={{
                 borderWidth: 2,
-                borderColor: "#FFF",
-                backgroundColor: "#FFF",
+                borderColor: 'rgba(255, 255, 255, 0.2)',
+                backgroundColor: 'rgba(255, 255, 255, 0.2)',
                 marginBottom: 10,
+                marginTop: 10,
                 borderRadius: 6
             }}
             onPress={() => {
@@ -204,49 +150,33 @@ export default function TrackedCard(props) {
                     hasSensors: props.hasSensors
                 })
             }}>
-            <ImageBackground source={{ uri: `data:image/jpg;base64,${props.pic}` }} style={{
+            <Image source={{ uri: `data:image/jpg;base64,${props.pic}` }} style={{
                 flex: 1,
-                resizeMode: "cover"
+                resizeMode: "cover",
+                height: 100,
+                borderRadius: 10,
+                marginTop: -5,
+                marginLeft: -1,
+                marginRight: -1
             }}>
-                <View style={{ backgroundColor: 'rgba(0,0,0,0.3)' }}>
-                    <Card.Title title={props.prog.plant.name} subtitle={props.prog.growth_stage.stage_title} titleStyle={{ color: "#FFF0E9" }} subtitleStyle={{ color: "#FFF0E9" }} left={(props) => <Avatar.Icon {...props} icon="flower" />} />
-                </View>
-            </ImageBackground>
+            </Image>
             <Card.Content>
-                <View style={{ flexDirection:"column", justifyContent: "center", alignItems: "center", paddingTop:10 }}>
-                    <Subheading>Očekivano vrijeme uzgoja:</Subheading>
-                    <Paragraph>{props.prog.growth_stage.stage_duration} dana</Paragraph>
-                    <Divider style={{ marginBottom: 10, marginTop: 10 }} />
-                    <Subheading>Proteklo vrijeme od sadnje:</Subheading>
-                    <Paragraph>{elapsedTime(Date.parse(props.prog.started_on))}</Paragraph>
-                    <View style={{ paddingTop: 10, width: 200 }}>
-                        <ProgressBar progress={calculateProgress(Date.parse(props.prog.started_on), props.prog.growth_stage.stage_duration)} color={Colors.green500} />
-                    </View>
-                    <Divider style={{ marginBottom: 10, marginTop: 20 }} />
-                    <Subheading>Zadnje zalijevanje prije:</Subheading>
-                    <Paragraph>{elapsedTime(Date.parse(props.prog.last_watered_on))}</Paragraph>
-                    <View style={{ flexDirection: "row", alignItems: "center" }}>
-                        <View style={{ paddingTop: 10, width: 200 }}>
-                            <ProgressBar progress={1 - calculateProgressPerHour(Date.parse(props.prog.last_watered_on), "2-3")} color={Colors.blue300} />
-                        </View>
+                <View style={{ flexDirection: "column", justifyContent: "center", alignItems:'center', paddingTop: 10 }}>
+                    <Subheading style={{textAlign:'center'}}>{props.prog.plant.name}</Subheading>
+                    <Text style={{marginTop:5}}>U sadnji: {elapsedTime(Date.parse(props.prog.started_on))}</Text>
+                    <Text style={{ marginTop: 10 }}>Zadnje zalijevanje:</Text>
+                    <View style={{ flexDirection: "row", width: '100%', alignItems:'center', justifyContent:'center' }}>
+                        <Text>{elapsedTime(Date.parse(props.prog.last_watered_on))}</Text>
                         <IconButton
                             icon="water-outline"
                             onPress={() => watered(props.prog.id)}
-                            style={{ marginleft: 20 }}
+                            color='#77B5FE'
                         />
                     </View>
-
-                    <Divider style={{ marginTop: 30 }} />
                 </View>
             </Card.Content>
-            <Card.Actions style={{ flexDirection: 'row', justifyContent: 'space-around', paddingTop: 5 }}>
-                <Button
-                    onPress={() => tryToDelete(props.prog.id)}
-                >Obriši</Button>
-                <Button
-                    onPress={() => moveToDone(props.prog.id)}
-                >Gotovo</Button>
-            </Card.Actions>
         </Card >
     );
 }
+
+//<Paragraph>{props.prog.growth_stage.stage_duration} dana</Paragraph>

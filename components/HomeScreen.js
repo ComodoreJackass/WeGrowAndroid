@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet, BackHandler, Alert, Text, ImageBackground } from 'react-native';
+import { View, ScrollView, RefreshControl, StyleSheet, BackHandler, Alert, Text, ImageBackground, Image } from 'react-native';
 import { Avatar, Button, Card, Title, Paragraph, Colors, ProgressBar, Subheading, IconButton, Appbar, TextInput, Divider } from 'react-native-paper';
 import TrackedCard from './TrackedCard'
 
@@ -10,7 +10,8 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
   const [notificationSent, setNotificationSent] = useState(false);
 
   const [progress, setProgress] = useState([]);
-  const [cards, setCards] = useState([]);
+  const [lCards, setLeftCards] = useState([]);
+  const [rCards, setRightCards] = useState([]);
   const [refreshing, setRefreshing] = useState(true);
   const [progressFetched, setProgressFetched] = useState(false);
   const [plants, setPlants] = useState([]);
@@ -135,9 +136,9 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
         plantName={prog.plant.name}
         pic={plants[prog.plant.id - 1].image}
         elapsedTime={elapsedTime(Date.parse(prog.started_on))}
-        duration={prog.growth_stage.stage_duration}
-        plantCare={prog.growth_stage.next_stage_text}
-        plantInstructions={prog.growth_stage.description}
+        duration={prog.plant.duration}
+        plantCare={prog.plant.care}
+        plantInstructions={prog.plant.instructions}
         hasSensors={prog.has_sensors}
         prog={prog}
         onRefresh={onRefresh}
@@ -147,7 +148,19 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
       />
     ));
 
-    setCards(tmp);
+    let lcards = [];
+    let rcards = [];
+
+    for (var i = 0; i < tmp.length; i++) {
+      if (i % 2 === 0) {
+        lcards.push(tmp[i]);
+      } else {
+        rcards.push(tmp[i]);
+      }
+    }
+
+    setLeftCards(lcards);
+    setRightCards(rcards);
 
   }, [progress])
 
@@ -157,36 +170,56 @@ export default function HomeScreen({ navigation, navigation: { setParams }, rout
       setRefreshing(false);
     }
     );
-  } 
+  }
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#F1E3C8' }}>
-      <ScrollView
-        style={styles.container} refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
-        }
-      >
-        {progressFetched
-          ?
-          cards.length > 0
+    <View style={{ flex: 1, backgroundColor: '#FFF' }}>
+      <ImageBackground source={require('../assets/background.png')} style={{
+        flex: 1,
+        resizeMode: "cover",
+        paddingTop: 10
+      }}>
+        <ScrollView
+          style={styles.container} refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+            />
+          }
+        >
+          <Image source={require('../assets/mojeBiljke.png')} style={{ alignSelf: 'center' }} />
+          <View style={{ margin: 5 }}>
+            <Title style={{ textAlign: 'center', color: 'purple' }}>Moje biljke</Title>
+          </View>
+          {progressFetched
             ?
-            cards
+            lCards.length > 0
+              ?
+              <View style={{ flex: 1, flexDirection: 'row' }}>
+                <View style={{ flex: 1, flexDirection: 'column' }}></View>
+                <View style={{ flex: 30, flexDirection: 'column' }}>
+                  {lCards}
+                </View>
+                <View style={{ flex: 1, flexDirection: 'column' }}></View>
+                <View style={{ flex: 30, flexDirection: 'column' }}>
+                  {rCards}
+                </View>
+                <View style={{ flex: 1, flexDirection: 'column' }}></View>
+              </View>
+              :
+              <Subheading
+                style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', paddingTop: 50 }}
+              >
+                Swajpate lijevo kako bi dodali biljku na ekran za praćenje.
+            </Subheading>
             :
             <Subheading
-              style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', paddingTop: 200 }}
+              style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', paddingTop: 50 }}
             >
-              Swajpate lijevo kako bi dodali biljku na ekran za praćenje.
-            </Subheading>
-          :
-          <Subheading
-            style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', paddingTop: 200 }}
-          >
-            Učitavanje...
+              Učitavanje...
           </Subheading>}
-      </ScrollView>
+        </ScrollView>
+      </ImageBackground>
     </View >
   );
 }

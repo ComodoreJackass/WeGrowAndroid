@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet, ImageBackground, ActivityIndicator, Text } from 'react-native';
+import { View, ScrollView, RefreshControl, StyleSheet, Image, ActivityIndicator, Text, TouchableOpacity } from 'react-native';
 import { Button, Snackbar, TextInput, Title, Avatar, Colors, Divider, Portal } from 'react-native-paper';
 
 export default function LoginForm({ navigation, route }) {
@@ -86,26 +86,21 @@ export default function LoginForm({ navigation, route }) {
 
     return (
         <View style={{ flex: 1 }}>
-            <ImageBackground source={require('../assets/bckg.png')} style={{
-                flex: 1,
-                resizeMode: "cover",
-                justifyContent: "center"
-            }}>
-               <ScrollView refreshControl={
-                    <RefreshControl
-                        refreshing={loading}
-                        onRefresh={verifyInput}
-                    />
-                }
-                >
-                    <View style={styles.container}>
-                    <View style={{ paddingTop: "10%", paddingBottom: "5%" }}>
-                        <Avatar.Icon size={90} icon="account" color={Colors.white} style={{ alignSelf: "center" }} />
+            <ScrollView refreshControl={
+                <RefreshControl
+                    refreshing={loading}
+                    onRefresh={verifyInput}
+                />
+            }
+            >
+                <View style={styles.container}>
+                    <View style={{ paddingTop: "10%", paddingBottom: "3%" }}>
+                        <Image source={require('../assets/login.png')} style={{ alignSelf: 'center' }} />
                         <View style={{ flexDirection: "row", justifyContent: "space-evenly", paddingBottom: "5%" }}>
                             <View style={{ flex: 1 }}></View>
-                            <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: "0.2%", marginTop: "8.4%" }} />
-                            <Title style={{ flex: 1.4, paddingTop: "2.5%", textAlign: "center" }}>Prijava</Title>
-                            <Divider style={{ flex: 1, backgroundColor: '#1D9044', padding: "0.2%", marginTop: "8.4%" }} />
+                            <Divider style={{ flex: 1, backgroundColor: '#79C52A', padding: "0.2%", marginTop: "8.4%" }} />
+                            <Title style={{ flex: 2.5, paddingTop: "2.5%", textAlign: "center" }}>Dobrodošli</Title>
+                            <Divider style={{ flex: 1, backgroundColor: '#79C52A', padding: "0.2%", marginTop: "8.4%" }} />
                             <View style={{ flex: 1 }}></View>
                         </View>
                     </View>
@@ -113,7 +108,7 @@ export default function LoginForm({ navigation, route }) {
                         label='Korisničko ime'
                         mode='outlined'
                         theme={{ roundness: 50 }}
-                        style={{ backgroundColor: '#FFF6F2', marginLeft: "6%", marginRight: "6%" }}
+                        style={{ backgroundColor: '#FFF', marginLeft: "15%", marginRight: "15%", marginBottom: '3%' }}
                         error={usernameValidated}
                         onChangeText={text => {
                             setUsername(text.toString());
@@ -125,7 +120,7 @@ export default function LoginForm({ navigation, route }) {
                         label='Lozinka'
                         mode='outlined'
                         theme={{ roundness: 50 }}
-                        style={{ backgroundColor: '#FFF6F2', marginLeft: "6%", marginRight: "6%" }}
+                        style={{ backgroundColor: '#FFF', marginLeft: "15%", marginRight: "15%" }}
                         error={passwordValidated}
                         secureTextEntry={true}
                         onChangeText={text => {
@@ -134,30 +129,32 @@ export default function LoginForm({ navigation, route }) {
                         }}
                         value={password}
                     />
-                    <View style={{ paddingTop: "28%" }}>
-                        <Button
-                            theme={{ roundness: 50 }}
-                            style={{ paddingTop: "2%", paddingBottom: "2%", marginLeft: "6%", marginRight: "6%" }}
-                            mode="contained"
+                    <View style={{ paddingTop: "10%" }}>
+                        <TouchableOpacity
+                            style={{ paddingTop: "3%", paddingBottom: "3%", marginLeft: "30%", marginRight: "30%", backgroundColor: '#79C52A', borderRadius: 20 }}
                             onPress={verifyInput}
+                            activeOpacity={0.8}
                         >
-                            Prijavi me
-                        </Button>
-                    </View>
-                    <View style={{ paddingTop: "20%" }}>
-                        <Divider style={{ backgroundColor: '#1D9044', padding: "0.2%" }} />
-                        <Button
-                            theme={{ roundness: 5 }}
-                            style={{ paddingTop: "2%", paddingBottom: "4%" }}
-                            mode="text"
-                            onPress={() => navigation.navigate('Register')}
-                        ><Text upercase={false}>
-                                Izrada računa
+                            <Text style={{ color: 'white', textAlign: 'center', fontSize: 16 }} uppercase={false}>
+                                Prijavi me
                             </Text>
-                        </Button>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{ paddingTop: "25%", paddingBottom: '8%', flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text upercase={false} style={{ color: 'black', paddingRight: "1%" }}>
+                            Nemate račun?
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() => navigation.navigate('Register')}
+                            activeOpacity={0.8}
+                        ><Text upercase={false} style={{ color: '#799EAE' }} >
+                                Registrirajte se
+                            </Text>
+                        </TouchableOpacity>
+
                     </View>
                 </View>
-                </ScrollView>
+            </ScrollView>
             <Snackbar
                 visible={visible}
                 onDismiss={onDismissSnackBar}
@@ -170,7 +167,6 @@ export default function LoginForm({ navigation, route }) {
             >
                 {snackText}
             </Snackbar>
-            </ImageBackground>
         </View >
     );
 }
@@ -179,6 +175,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingLeft: "6%",
-        paddingRight: "6%"
+        paddingRight: "6%",
+        backgroundColor: "#FFFFFF"
     },
 });

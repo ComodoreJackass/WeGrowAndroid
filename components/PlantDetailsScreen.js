@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, ScrollView, RefreshControl, StyleSheet, Text, BackHandler, ImageBackground, TouchableOpacity } from 'react-native';
+import { View, ScrollView, RefreshControl, StyleSheet, Text, BackHandler, ImageBackground, TouchableOpacity, Image } from 'react-native';
 import { TouchableRipple, Button, Card, Title, Paragraph, Appbar, TextInput, ProgressBar, Colors, List, Portal, Dialog, Subheading, Divider } from 'react-native-paper';
 import mqtt from 'mqtt/dist/mqtt';
 import PushNotification from "react-native-push-notification";
@@ -195,35 +195,100 @@ export default function PlantDetailsScreen({ navigation, route }) {
         setTmpTla("X");
         setVlagaTla("X");
         setVlagaZraka("X");
-        //client = mqtt.connect("mqtts://m24.cloudmqtt.com:30991", { clientId: "jelMeNekoTrazio", username: "web", password: "a" });
+    }
+
+    async function moveToDone(progId) {
+        try {
+            let response = await fetch('https://afternoon-depths-99413.herokuapp.com/progress/done', {
+                method: 'PATCH',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'authorization': 'Bearer ' + jsonToken
+                },
+                body: JSON.stringify({
+                    progressId: progId,
+                    done: 1
+                }),
+            });
+            let responseStatus = await response.status;
+
+            if (responseStatus == 200) {
+                console.log("Done");
+                navigation.navigate('Home', { testParam: true, })
+                //props.onRefresh();
+            }
+            else {
+                console.log(responseStatus);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function tryToDelete(progId) {
+        try {
+            let response = await fetch('https://afternoon-depths-99413.herokuapp.com/progress', {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'authorization': 'Bearer ' + jsonToken
+                },
+                body: JSON.stringify({
+                    progressId: progId
+                }),
+            });
+            let responseStatus = await response.status;
+
+            if (responseStatus == 200) {
+                console.log("Deleted");
+                navigation.navigate('Home', { testParam: true, })
+                //props.onRefresh();
+            }
+            else {
+                console.log(responseStatus);
+            }
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
         <View style={{ flex: 1 }}>
-            <Appbar.Header>
+            <Appbar.Header theme={{ colors: { primary: "#EFF0EF" } }}>
                 <Appbar.BackAction
                     onPress={() => navigation.navigate('Tab', {
                         jsonToken: jsonToken,
                         userId: userId
                     })}
+                    color='#D06F6F'
                 />
                 <Appbar.Content
                     title={route.params.plantName}
+                    titleStyle={{ color: '#D06F6F' }}
                 />
             </Appbar.Header>
             <View style={styles.container}>
-                <ImageBackground source={require('../assets/bckg.png')} style={{
+                <ImageBackground source={require('../assets/background.png')} style={{
                     flex: 1,
                     resizeMode: "cover",
                 }}>
                     <ScrollView style={{ paddingTop: 5 }}>
                         <Card style={styles.card}>
-                            <Card.Cover source={{ uri: `data:image/jpg;base64,${pic}` }} />
+                            <Image source={{ uri: `data:image/jpg;base64,${pic}` }} style={{
+                                flex: 1,
+                                resizeMode: "cover",
+                                height: 200,
+                                borderRadius: 20,
+                                marginTop: -18,
+                                marginLeft: -10,
+                                marginRight: -10
+                            }}>
+                            </Image>
                             <Card.Content style={{ padding: 15 }}>
-                                <Subheading>Vrsta: povrće </Subheading>
                                 <Subheading>Vrijeme uzgoja: {route.params.duration} dana </Subheading>
-                                <Subheading>Proteklo vrijeme: {route.params.elapsedTime}</Subheading>
-
+                                <Subheading style={{ marginTop: 5 }}>Proteklo vrijeme: {route.params.elapsedTime}</Subheading>
                                 <TouchableOpacity onPress={() => {
                                     setShowDialog(true);
                                 }}>
@@ -310,7 +375,6 @@ export default function PlantDetailsScreen({ navigation, route }) {
                                         <Divider style={{ marginBottom: 10, marginTop: 10 }} />
                                     </View>
                                 </TouchableOpacity>
-
                                 <List.Section style={{ marginLeft: -20 }}>
                                     <List.Accordion
                                         title="Briga o biljci"
@@ -325,8 +389,23 @@ export default function PlantDetailsScreen({ navigation, route }) {
                                         <Subheading style={{ marginLeft: -20, paddingRight: 10 }}>{route.params.plantInstructions}</Subheading>
                                     </List.Accordion>
                                 </List.Section>
-
                             </Card.Content>
+                            <Card.Actions style={{ flexDirection: 'row', justifyContent: 'space-around', paddingTop: 5 }}>
+                                <TouchableOpacity
+                                    onPress={() => tryToDelete(progressId)}
+                                >
+                                    <Text style={{ color: '#799EAE', fontSize: 16 }}>
+                                        Obriši
+                            </Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={() => moveToDone(progressId)}
+                                >
+                                    <Text style={{ color: '#799EAE', fontSize: 16 }}>
+                                        Gotovo
+                            </Text>
+                                </TouchableOpacity>
+                            </Card.Actions>
                         </Card>
                     </ScrollView>
                 </ImageBackground>
@@ -338,7 +417,7 @@ export default function PlantDetailsScreen({ navigation, route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F1E3C8'
+        backgroundColor: '#FFF'
     },
     row: {
         paddingTop: 40,
@@ -355,9 +434,10 @@ const styles = StyleSheet.create({
     },
     card: {
         borderWidth: 10,
-        borderColor: 'rgba(255, 255, 255, 0.8)',
+        borderColor: 'rgba(255, 255, 255, 0.1)',
         marginLeft: 20,
         marginRight: 20,
-        backgroundColor: 'rgba(255, 255, 255, 0.8)'
+        marginTop: 10,
+        backgroundColor: 'rgba(255, 255, 255, 0.1)'
     }
 });
