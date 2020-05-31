@@ -129,7 +129,7 @@ export default function PlantBrowser({ navigation, route }) {
         let split = plantId.split(";");
         console.log(split);
         let tmp = split.map(mat => (
-            <Text key={uuidv4()} style={{marginBottom:5}}>
+            <Text key={uuidv4()} style={{ marginBottom: 5 }}>
                 {mat}
             </Text>
         ));
@@ -166,26 +166,14 @@ export default function PlantBrowser({ navigation, route }) {
                             style={{ marginLeft: -14 }}
                             title="Info"
                         >
-                            <List.Section>
-                                <List.Accordion
-                                    style={{ marginLeft: -14 }}
-                                    title="Opis"
-                                >
-                                    <Paragraph>{plant.summary}</Paragraph>
-                                </List.Accordion>
-                            </List.Section>
+                            <Subheading>Opis:</Subheading>
+                            <Paragraph>{plant.summary}</Paragraph>
                             <Divider style={{ marginBottom: 10, marginTop: -5 }} />
                             <Subheading>Težina uzgoja:</Subheading>
                             <Paragraph>{plant.difficulty}</Paragraph>
                             <Divider style={{ marginBottom: 10, marginTop: 10 }} />
-                            <List.Section>
-                                <List.Accordion
-                                    style={{ marginLeft: -14 }}
-                                    title="Materijali"
-                                >
-                                    {populateMaterials(plant.materials)}
-                                </List.Accordion>
-                            </List.Section>
+                            <Subheading>Materijali:</Subheading>
+                            {populateMaterials(plant.materials)}
                         </List.Accordion>
                     </List.Section>
                 </Card.Content>
