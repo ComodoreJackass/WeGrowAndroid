@@ -85,7 +85,7 @@ export default function LoginForm({ navigation, route }) {
     }, [route.params?.post]);
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1, backgroundColor: "#FFFFFF" }}>
             <ScrollView refreshControl={
                 <RefreshControl
                     refreshing={loading}

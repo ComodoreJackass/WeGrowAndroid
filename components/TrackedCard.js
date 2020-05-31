@@ -5,6 +5,11 @@ import PushNotification from "react-native-push-notification";
 
 export default function TrackedCard(props) {
 
+    useEffect(()=>{
+        console.log(props.prog.last_watered_on);
+        calculateProgressPerHour(Date.parse(props.prog.last_watered_on), "2-3");
+    }, []);
+
     PushNotification.configure({
         // (required) Called when a remote is received or opened, or local notification is opened
         onNotification: function (notification) {
