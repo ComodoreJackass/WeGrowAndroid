@@ -161,8 +161,8 @@ export default function TrackedCard(props) {
                 height: 100,
                 borderRadius: 10,
                 marginTop: -5,
-                marginLeft: -1,
-                marginRight: -1
+                marginLeft: -2,
+                marginRight: -2
             }}>
             </Image>
             <Card.Content>
